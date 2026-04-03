@@ -71,7 +71,7 @@ Reviews the user-facing recommendation text and checks it against EU AI Act Arti
 
 ## Data
 
-All scenario data is baked into the React component. The `data/synthetic_db.json` file is a reference document, not used at runtime. All dates are relative (T+N days) so data never goes stale.
+The React component imports `data/synthetic_db.json` at build time — single source of truth. All dates are relative (T+N days) so data never goes stale. See `data/scenarios.md` for the full breakdown of what each SMB tests and the expected behavior.
 
 ---
 
