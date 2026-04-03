@@ -1,0 +1,5 @@
+thinking/
+app/.streamlit/secrets.toml
+__pycache__/
+*.pyc
+.env

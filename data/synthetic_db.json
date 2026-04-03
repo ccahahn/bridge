@@ -1,0 +1,389 @@
+{
+  "businesses": [
+    {
+      "business_id": "biz_001",
+      "name": "GreenLeaf Design Studio",
+      "industry": "Creative Services",
+      "overdraft_limit": 50000,
+      "overdraft_rate": 0.02,
+      "current_balance": 31000,
+      "typical_buffer": 5000,
+      "monthly_revenue_avg": 120000,
+      "months_on_pleo": 18,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "bridge_works"
+    },
+    {
+      "business_id": "biz_002",
+      "name": "Nordic Freight Solutions",
+      "industry": "Logistics",
+      "overdraft_limit": 75000,
+      "overdraft_rate": 0.02,
+      "current_balance": 22000,
+      "typical_buffer": 8000,
+      "monthly_revenue_avg": 200000,
+      "months_on_pleo": 14,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "bridge_risky"
+    },
+    {
+      "business_id": "biz_003",
+      "name": "Bright Path Tutoring",
+      "industry": "Education",
+      "overdraft_limit": 25000,
+      "overdraft_rate": 0.02,
+      "current_balance": 6000,
+      "typical_buffer": 3000,
+      "monthly_revenue_avg": 45000,
+      "months_on_pleo": 8,
+      "balance_trend": "declining",
+      "overdraft_usage_trend": "increasing",
+      "scenario": "correctly_declines"
+    },
+    {
+      "business_id": "biz_004",
+      "name": "Coastal Analytics",
+      "industry": "Data Consulting",
+      "overdraft_limit": 60000,
+      "overdraft_rate": 0.02,
+      "current_balance": 18000,
+      "typical_buffer": 6000,
+      "monthly_revenue_avg": 150000,
+      "months_on_pleo": 22,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "gotcha_deteriorating_payer"
+    },
+    {
+      "business_id": "biz_005",
+      "name": "UrbanBrew Coffee Roasters",
+      "industry": "Food & Beverage",
+      "overdraft_limit": 40000,
+      "overdraft_rate": 0.02,
+      "current_balance": 15000,
+      "typical_buffer": 4000,
+      "monthly_revenue_avg": 90000,
+      "months_on_pleo": 12,
+      "balance_trend": "declining",
+      "overdraft_usage_trend": "increasing",
+      "scenario": "gotcha_solvency_not_liquidity"
+    }
+  ],
+
+  "obligations": [
+    {
+      "obligation_id": "obl_001",
+      "business_id": "biz_001",
+      "type": "payroll",
+      "amount": 42000,
+      "due_in_days": 9,
+      "recurring": true,
+      "description": "Monthly payroll - 12 employees"
+    },
+    {
+      "obligation_id": "obl_002",
+      "business_id": "biz_001",
+      "type": "rent",
+      "amount": 4500,
+      "due_in_days": 15,
+      "recurring": true,
+      "description": "Studio lease"
+    },
+
+    {
+      "obligation_id": "obl_003",
+      "business_id": "biz_002",
+      "type": "payroll",
+      "amount": 58000,
+      "due_in_days": 11,
+      "recurring": true,
+      "description": "Monthly payroll - 18 employees"
+    },
+    {
+      "obligation_id": "obl_004",
+      "business_id": "biz_002",
+      "type": "vendor",
+      "amount": 12000,
+      "due_in_days": 7,
+      "recurring": false,
+      "description": "Fleet maintenance invoice"
+    },
+
+    {
+      "obligation_id": "obl_005",
+      "business_id": "biz_003",
+      "type": "payroll",
+      "amount": 18000,
+      "due_in_days": 10,
+      "recurring": true,
+      "description": "Monthly payroll - 5 employees"
+    },
+    {
+      "obligation_id": "obl_006",
+      "business_id": "biz_003",
+      "type": "rent",
+      "amount": 2800,
+      "due_in_days": 14,
+      "recurring": true,
+      "description": "Office lease"
+    },
+
+    {
+      "obligation_id": "obl_007",
+      "business_id": "biz_004",
+      "type": "payroll",
+      "amount": 52000,
+      "due_in_days": 8,
+      "recurring": true,
+      "description": "Monthly payroll - 15 employees"
+    },
+    {
+      "obligation_id": "obl_008",
+      "business_id": "biz_004",
+      "type": "tax",
+      "amount": 14000,
+      "due_in_days": 20,
+      "recurring": false,
+      "description": "Quarterly VAT payment"
+    },
+
+    {
+      "obligation_id": "obl_009",
+      "business_id": "biz_005",
+      "type": "payroll",
+      "amount": 28000,
+      "due_in_days": 12,
+      "recurring": true,
+      "description": "Monthly payroll - 8 employees"
+    },
+    {
+      "obligation_id": "obl_010",
+      "business_id": "biz_005",
+      "type": "vendor",
+      "amount": 15000,
+      "due_in_days": 5,
+      "recurring": true,
+      "description": "Green bean supplier - monthly delivery"
+    },
+    {
+      "obligation_id": "obl_011",
+      "business_id": "biz_005",
+      "type": "vendor",
+      "amount": 8000,
+      "due_in_days": 18,
+      "recurring": false,
+      "description": "New espresso machine lease payment"
+    }
+  ],
+
+  "receivables": [
+    {
+      "receivable_id": "rec_001",
+      "business_id": "biz_001",
+      "payer_id": "pyr_001",
+      "invoice_amount": 50000,
+      "due_in_days": 38,
+      "description": "Q1 brand identity project - Acme Corp"
+    },
+    {
+      "receivable_id": "rec_002",
+      "business_id": "biz_001",
+      "payer_id": "pyr_002",
+      "invoice_amount": 8000,
+      "due_in_days": 45,
+      "description": "Logo refresh - Bloom Bakery"
+    },
+
+    {
+      "receivable_id": "rec_003",
+      "business_id": "biz_002",
+      "payer_id": "pyr_003",
+      "invoice_amount": 65000,
+      "due_in_days": 30,
+      "description": "February freight contract - SlowShip Retail"
+    },
+    {
+      "receivable_id": "rec_004",
+      "business_id": "biz_002",
+      "payer_id": "pyr_004",
+      "invoice_amount": 22000,
+      "due_in_days": 25,
+      "description": "Express delivery batch - QuickMart"
+    },
+
+    {
+      "receivable_id": "rec_005",
+      "business_id": "biz_003",
+      "payer_id": "pyr_005",
+      "invoice_amount": 20000,
+      "due_in_days": 35,
+      "description": "Spring tutoring program - NewSchool Academy"
+    },
+
+    {
+      "receivable_id": "rec_006",
+      "business_id": "biz_004",
+      "payer_id": "pyr_006",
+      "invoice_amount": 55000,
+      "due_in_days": 32,
+      "description": "Data migration project - TrustBank"
+    },
+    {
+      "receivable_id": "rec_007",
+      "business_id": "biz_004",
+      "payer_id": "pyr_006",
+      "invoice_amount": 30000,
+      "due_in_days": 50,
+      "description": "Analytics dashboard phase 2 - TrustBank"
+    },
+
+    {
+      "receivable_id": "rec_008",
+      "business_id": "biz_005",
+      "payer_id": "pyr_007",
+      "invoice_amount": 35000,
+      "due_in_days": 28,
+      "description": "Monthly wholesale order - HotelGroup Nordic"
+    },
+    {
+      "receivable_id": "rec_009",
+      "business_id": "biz_005",
+      "payer_id": "pyr_008",
+      "invoice_amount": 12000,
+      "due_in_days": 40,
+      "description": "Office supply contract - StartupHub"
+    }
+  ],
+
+  "payers": [
+    {
+      "payer_id": "pyr_001",
+      "payer_name": "Acme Corp",
+      "total_invoices": 12,
+      "paid_on_time": 11,
+      "avg_days_to_pay": 28,
+      "avg_days_late_when_late": 5,
+      "last_5_payments": [
+        { "days_to_pay": 27, "on_time": true },
+        { "days_to_pay": 26, "on_time": true },
+        { "days_to_pay": 30, "on_time": true },
+        { "days_to_pay": 28, "on_time": true },
+        { "days_to_pay": 25, "on_time": true }
+      ],
+      "trend": "stable",
+      "first_invoice_months_ago": 24
+    },
+    {
+      "payer_id": "pyr_002",
+      "payer_name": "Bloom Bakery",
+      "total_invoices": 3,
+      "paid_on_time": 3,
+      "avg_days_to_pay": 22,
+      "avg_days_late_when_late": 0,
+      "last_5_payments": [
+        { "days_to_pay": 20, "on_time": true },
+        { "days_to_pay": 24, "on_time": true },
+        { "days_to_pay": 22, "on_time": true }
+      ],
+      "trend": "stable",
+      "first_invoice_months_ago": 5
+    },
+    {
+      "payer_id": "pyr_003",
+      "payer_name": "SlowShip Retail",
+      "total_invoices": 10,
+      "paid_on_time": 5,
+      "avg_days_to_pay": 42,
+      "avg_days_late_when_late": 18,
+      "last_5_payments": [
+        { "days_to_pay": 38, "on_time": false },
+        { "days_to_pay": 45, "on_time": false },
+        { "days_to_pay": 30, "on_time": true },
+        { "days_to_pay": 50, "on_time": false },
+        { "days_to_pay": 48, "on_time": false }
+      ],
+      "trend": "deteriorating",
+      "first_invoice_months_ago": 20
+    },
+    {
+      "payer_id": "pyr_004",
+      "payer_name": "QuickMart",
+      "total_invoices": 8,
+      "paid_on_time": 7,
+      "avg_days_to_pay": 18,
+      "avg_days_late_when_late": 3,
+      "last_5_payments": [
+        { "days_to_pay": 17, "on_time": true },
+        { "days_to_pay": 19, "on_time": true },
+        { "days_to_pay": 16, "on_time": true },
+        { "days_to_pay": 22, "on_time": false },
+        { "days_to_pay": 18, "on_time": true }
+      ],
+      "trend": "stable",
+      "first_invoice_months_ago": 16
+    },
+    {
+      "payer_id": "pyr_005",
+      "payer_name": "NewSchool Academy",
+      "total_invoices": 0,
+      "paid_on_time": 0,
+      "avg_days_to_pay": null,
+      "avg_days_late_when_late": null,
+      "last_5_payments": [],
+      "trend": "unknown",
+      "first_invoice_months_ago": 0
+    },
+    {
+      "payer_id": "pyr_006",
+      "payer_name": "TrustBank",
+      "total_invoices": 15,
+      "paid_on_time": 13,
+      "avg_days_to_pay": 30,
+      "avg_days_late_when_late": 8,
+      "last_5_payments": [
+        { "days_to_pay": 30, "on_time": true },
+        { "days_to_pay": 35, "on_time": false },
+        { "days_to_pay": 38, "on_time": false },
+        { "days_to_pay": 42, "on_time": false },
+        { "days_to_pay": 45, "on_time": false }
+      ],
+      "trend": "deteriorating",
+      "first_invoice_months_ago": 30
+    },
+    {
+      "payer_id": "pyr_007",
+      "payer_name": "HotelGroup Nordic",
+      "total_invoices": 11,
+      "paid_on_time": 10,
+      "avg_days_to_pay": 25,
+      "avg_days_late_when_late": 4,
+      "last_5_payments": [
+        { "days_to_pay": 24, "on_time": true },
+        { "days_to_pay": 26, "on_time": true },
+        { "days_to_pay": 23, "on_time": true },
+        { "days_to_pay": 25, "on_time": true },
+        { "days_to_pay": 29, "on_time": false }
+      ],
+      "trend": "stable",
+      "first_invoice_months_ago": 22
+    },
+    {
+      "payer_id": "pyr_008",
+      "payer_name": "StartupHub",
+      "total_invoices": 4,
+      "paid_on_time": 2,
+      "avg_days_to_pay": 38,
+      "avg_days_late_when_late": 12,
+      "last_5_payments": [
+        { "days_to_pay": 30, "on_time": true },
+        { "days_to_pay": 42, "on_time": false },
+        { "days_to_pay": 35, "on_time": false },
+        { "days_to_pay": 45, "on_time": false }
+      ],
+      "trend": "deteriorating",
+      "first_invoice_months_ago": 8
+    }
+  ]
+}
