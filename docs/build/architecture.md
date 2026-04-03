@@ -29,7 +29,7 @@
 
 ## Rule Engine
 
-The credit logic runs entirely client-side with predetermined outcomes. See `model-spec-cash-flow-monitor.md` and `model-spec-credit-assessor.md` for the full decision logic.
+The credit logic runs entirely client-side with predetermined outcomes.
 
 **Cash Flow Monitor logic:**
 1. Project cash forward: `current_balance - obligations within 30 days`
@@ -60,7 +60,7 @@ Reviews the user-facing recommendation text and checks it against EU AI Act Arti
 - Checking whether natural language *actually* communicates these things — not just that the right keywords appear — requires language understanding
 - Edge cases: is "we think this is safe" a guarantee or a recommendation? Does the rationale actually explain the data, or just reference it? Is the AI disclosure visible or buried?
 
-**Prompt:** Managed in Braintrust (project: Bridge, slug: `compliance-agent-prompt`). See `model-spec-compliance-agent.md` for the full spec.
+**Prompt:** Managed in Braintrust (project: Bridge, slug: `compliance-agent-prompt-4e0b`). See `model-spec-compliance-agent.md` for the full spec.
 
 **Integration:**
 - Next.js API route (`/api/compliance`) receives recommendation text, calls Claude via Anthropic SDK
@@ -69,61 +69,9 @@ Reviews the user-facing recommendation text and checks it against EU AI Act Arti
 
 ---
 
-## Data Model
+## Data
 
-### Business Profile
-
-```json
-{
-  "business_id": "string",
-  "name": "string",
-  "industry": "string",
-  "overdraft_limit": 50000,
-  "overdraft_rate": 0.02,
-  "current_balance": 31000,
-  "typical_buffer": 5000,
-  "monthly_revenue_avg": 120000,
-  "months_on_pleo": 18,
-  "balance_trend": "stable | declining",
-  "overdraft_usage_trend": "stable | increasing"
-}
-```
-
-### Obligations, Receivables, Payers
-
-Same schema as before — see `data/synthetic_db.json`. All dates are relative (T+N days) so data never goes stale.
-
----
-
-## User-Facing Output
-
-Only generated when the rule engine approves a bridge. Must comply with EU AI Act Article 50.
-
-```
-🤖 AI-generated recommendation
-
-Your payment from [Payer] isn't due for [X] days, but you have
-[obligation type] in [Y] days. We can bridge €[amount] to cover
-the gap and keep your usual buffer.
-
-How we assessed this:
-- We analyzed [Payer]'s payment history: [N] of [M] invoices
-  paid on time, averaging [Z] days to pay
-- We calculated your gap based on your current balance (€[bal]),
-  upcoming [obligation type] (€[obl]), and your typical €[buffer] cushion
-- This recommendation was generated automatically by Pleo's
-  credit assessment system
-
-When the advance resolves:
-- When [Payer] pays this invoice, we automatically apply €[amount]
-  back to your balance
-
-This is a recommendation, not a guarantee. The final decision is yours.
-
-[Approve] [Not now]
-```
-
-The compliance agent reviews this output and flags any gaps before it reaches the user.
+All scenario data is baked into the React component. The `data/synthetic_db.json` file is a reference document, not used at runtime. All dates are relative (T+N days) so data never goes stale.
 
 ---
 
