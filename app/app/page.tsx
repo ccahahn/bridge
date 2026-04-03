@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import db from "./data/synthetic_db.json";
 
 // ─── Types ───
 interface Payment { days: number; onTime: boolean }
@@ -19,146 +20,84 @@ interface Scenario {
   declineReason: string | null;
 }
 
-// ─── Synthetic Data (from our DB) ───
-const SCENARIOS: Record<string, Scenario> = {
-  healthy: {
-    id: "healthy",
-    name: "Verdant Studio",
-    label: "The bridge works",
-    tagline: "Healthy business, reliable payer, timing gap",
-    industry: "Design Agency",
-    balance: 31000, buffer: 5000, overdraftLimit: 50000, monthlyRevenue: 120000, monthsOnPleo: 18,
-    balanceTrend: "stable", overdraftUsageTrend: "stable",
-    obligations: [
-      { id: "ob1", type: "payroll", label: "Monthly Payroll", amount: 42000, dueDay: 9, icon: "\u{1F465}" },
-      { id: "ob2", type: "rent", label: "Studio Lease", amount: 4500, dueDay: 15, icon: "\u{1F3E2}" },
-    ],
-    receivables: [
-      { id: "rc1", payer: "Acme Corp", amount: 50000, dueDay: 38, description: "Q1 brand identity project" },
-      { id: "rc2", payer: "Bloom Bakery", amount: 8000, dueDay: 45, description: "Logo refresh" },
-    ],
-    payer: {
-      name: "Acme Corp", totalInvoices: 12, paidOnTime: 11, avgDaysToPay: 28, trend: "stable", onTimeRate: 0.917,
-      last5: [
-        { days: 27, onTime: true }, { days: 26, onTime: true }, { days: 30, onTime: true },
-        { days: 28, onTime: true }, { days: 25, onTime: true },
-      ],
-    },
-    recommendation: {
-      amount: 16000,
-      gapBreakdown: { obligation: 42000, balance: 31000, buffer: 5000, shortfall: 11000 },
-      decision: "advance", confidence: "high",
-      rationale: "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of \u20AC16,000 covers your payroll gap plus your typical \u20AC5,000 buffer. We bridge the timing, not the invoice.",
-      riskFactors: ["One late payment in last 12 invoices (35 days vs 30-day term)"],
-    },
-    resolution: { day: 36, message: "Acme Corp paid invoice #INV-2024-038. \u20AC16,000 bridge auto-resolved." },
-    declineReason: null,
-  },
-  risky: {
-    id: "risky",
-    name: "Norde Health",
-    label: "The bridge is risky",
-    tagline: "Similar gap, unreliable payer",
-    industry: "Health Tech",
-    balance: 22000, buffer: 8000, overdraftLimit: 75000, monthlyRevenue: 200000, monthsOnPleo: 14,
-    balanceTrend: "stable", overdraftUsageTrend: "stable",
-    obligations: [
-      { id: "ob1", type: "payroll", label: "Monthly Payroll", amount: 58000, dueDay: 11, icon: "\u{1F465}" },
-      { id: "ob2", type: "vendor", label: "Fleet Maintenance", amount: 12000, dueDay: 7, icon: "\u{1F69A}" },
-    ],
-    receivables: [
-      { id: "rc1", payer: "SlowShip Retail", amount: 65000, dueDay: 30, description: "February freight contract" },
-      { id: "rc2", payer: "QuickMart", amount: 22000, dueDay: 25, description: "Express delivery batch" },
-    ],
-    payer: {
-      name: "SlowShip Retail", totalInvoices: 10, paidOnTime: 5, avgDaysToPay: 42, trend: "deteriorating", onTimeRate: 0.5,
-      last5: [
-        { days: 38, onTime: false }, { days: 45, onTime: false }, { days: 50, onTime: false },
-        { days: 35, onTime: false }, { days: 30, onTime: true },
-      ],
-    },
-    recommendation: null,
-    resolution: null,
-    declineReason: "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but \u20AC22,000 doesn\u2019t cover the \u20AC56,000 gap. No safe bridge available.",
-  },
-  decline: {
-    id: "decline",
-    name: "Luma Interiors",
-    label: "Correctly declines",
-    tagline: "New client, no payment history",
-    industry: "Interior Design",
-    balance: 6000, buffer: 3000, overdraftLimit: 25000, monthlyRevenue: 45000, monthsOnPleo: 8,
-    balanceTrend: "declining", overdraftUsageTrend: "increasing",
-    obligations: [
-      { id: "ob1", type: "payroll", label: "Monthly Payroll", amount: 18000, dueDay: 10, icon: "\u{1F465}" },
-      { id: "ob2", type: "rent", label: "Office Lease", amount: 2800, dueDay: 14, icon: "\u{1F3E2}" },
-    ],
-    receivables: [
-      { id: "rc1", payer: "NewSchool Academy", amount: 20000, dueDay: 35, description: "Spring tutoring program" },
-    ],
-    payer: {
-      name: "NewSchool Academy", totalInvoices: 0, paidOnTime: 0, avgDaysToPay: null, trend: "unknown", onTimeRate: null, last5: [],
-    },
-    recommendation: null,
-    resolution: null,
-    declineReason: "NewSchool Academy is a new client with zero payment history. The system never bridges against unknown payers. Start small.",
-  },
-  deteriorating: {
-    id: "deteriorating",
-    name: "Vero Analytics",
-    label: "The average lies",
-    tagline: "Great lifetime stats hide a deteriorating trend",
-    industry: "Data Consulting",
-    balance: 18000, buffer: 6000, overdraftLimit: 60000, monthlyRevenue: 150000, monthsOnPleo: 22,
-    balanceTrend: "stable", overdraftUsageTrend: "stable",
-    obligations: [
-      { id: "ob1", type: "payroll", label: "Monthly Payroll", amount: 52000, dueDay: 8, icon: "\u{1F465}" },
-      { id: "ob2", type: "tax", label: "Quarterly VAT", amount: 14000, dueDay: 20, icon: "\u{1F4C4}" },
-    ],
-    receivables: [
-      { id: "rc1", payer: "TrustBank", amount: 55000, dueDay: 32, description: "Data migration project" },
-      { id: "rc2", payer: "TrustBank", amount: 30000, dueDay: 50, description: "Analytics dashboard phase 2" },
-    ],
-    payer: {
-      name: "TrustBank", totalInvoices: 15, paidOnTime: 13, avgDaysToPay: 30, trend: "deteriorating", onTimeRate: 0.867,
-      last5: [
-        { days: 30, onTime: true }, { days: 35, onTime: false }, { days: 38, onTime: false },
-        { days: 42, onTime: false }, { days: 45, onTime: false },
-      ],
-    },
-    recommendation: null,
-    resolution: null,
-    declineReason: "TrustBank looks great on paper \u2014 13 of 15 invoices paid on time (87%). But the last 4 payments have been late and getting worse: 35 \u2192 38 \u2192 42 \u2192 45 days. The average lies. Recent behavior matters more than lifetime stats.",
-  },
-  solvency: {
-    id: "solvency",
-    name: "Kova Roasters",
-    label: "Not a timing problem",
-    tagline: "Good payer, sinking business",
-    industry: "Food & Beverage",
-    balance: 15000, buffer: 4000, overdraftLimit: 40000, monthlyRevenue: 90000, monthsOnPleo: 12,
-    balanceTrend: "declining", overdraftUsageTrend: "increasing",
-    obligations: [
-      { id: "ob1", type: "payroll", label: "Monthly Payroll", amount: 28000, dueDay: 12, icon: "\u{1F465}" },
-      { id: "ob2", type: "vendor", label: "Bean Supplier", amount: 15000, dueDay: 5, icon: "\u2615" },
-      { id: "ob3", type: "vendor", label: "Espresso Machine Lease", amount: 8000, dueDay: 18, icon: "\u{1F527}" },
-    ],
-    receivables: [
-      { id: "rc1", payer: "HotelGroup Nordic", amount: 35000, dueDay: 28, description: "Monthly wholesale order" },
-      { id: "rc2", payer: "StartupHub", amount: 12000, dueDay: 40, description: "Office supply contract" },
-    ],
-    payer: {
-      name: "HotelGroup Nordic", totalInvoices: 11, paidOnTime: 10, avgDaysToPay: 25, trend: "stable", onTimeRate: 0.909,
-      last5: [
-        { days: 24, onTime: true }, { days: 26, onTime: true }, { days: 23, onTime: true },
-        { days: 25, onTime: true }, { days: 29, onTime: false },
-      ],
-    },
-    recommendation: null,
-    resolution: null,
-    declineReason: "HotelGroup Nordic is a reliable payer (10 of 11 on time). But Kova Roasters\u2019 balance is declining and overdraft usage is increasing. Obligations (\u20AC51,000) outpace receivables (\u20AC47,000). This isn\u2019t a timing problem \u2014 it\u2019s a business spending more than it earns. A good payer doesn\u2019t fix a sinking ship.",
-  },
+// ─── Icon map for obligation types ───
+const OBLIGATION_ICONS: Record<string, string> = {
+  payroll: "\u{1F465}", rent: "\u{1F3E2}", vendor: "\u{1F4E6}", tax: "\u{1F4C4}", other: "\u{1F4CB}",
 };
+
+// ─── Build scenarios from synthetic DB ───
+function buildScenarios(): Record<string, Scenario> {
+  const result: Record<string, Scenario> = {};
+
+  for (const sc of db.scenarios) {
+    const biz = db.businesses.find((b) => b.business_id === sc.business_id)!;
+    const obligations = db.obligations
+      .filter((o) => o.business_id === sc.business_id)
+      .map((o) => ({
+        id: o.obligation_id,
+        type: o.type,
+        label: o.description,
+        amount: o.amount,
+        dueDay: o.due_in_days,
+        icon: OBLIGATION_ICONS[o.type] || OBLIGATION_ICONS.other,
+      }));
+
+    const payer = db.payers.find((p) => p.payer_id === sc.primary_payer_id)!;
+
+    const receivables = db.receivables
+      .filter((r) => r.business_id === sc.business_id)
+      .map((r) => {
+        const rPayer = db.payers.find((p) => p.payer_id === r.payer_id)!;
+        return {
+          id: r.receivable_id,
+          payer: rPayer.payer_name,
+          amount: r.invoice_amount,
+          dueDay: r.due_in_days,
+          description: r.description,
+        };
+      });
+
+    result[sc.id] = {
+      id: sc.id,
+      name: biz.name,
+      label: sc.label,
+      tagline: sc.tagline,
+      industry: biz.industry,
+      balance: biz.current_balance,
+      buffer: biz.typical_buffer,
+      overdraftLimit: biz.overdraft_limit,
+      monthlyRevenue: biz.monthly_revenue_avg,
+      monthsOnPleo: biz.months_on_pleo,
+      balanceTrend: biz.balance_trend,
+      overdraftUsageTrend: biz.overdraft_usage_trend,
+      obligations,
+      receivables,
+      payer: {
+        name: payer.payer_name,
+        totalInvoices: payer.total_invoices,
+        paidOnTime: payer.paid_on_time,
+        avgDaysToPay: payer.avg_days_to_pay,
+        trend: payer.trend,
+        onTimeRate: payer.total_invoices > 0 ? payer.paid_on_time / payer.total_invoices : null,
+        last5: payer.last_5_payments.map((p) => ({ days: p.days_to_pay, onTime: p.on_time })),
+      },
+      recommendation: sc.recommendation ? {
+        amount: sc.recommendation.amount,
+        gapBreakdown: sc.recommendation.gap_breakdown as GapBreakdown,
+        decision: sc.recommendation.decision,
+        confidence: sc.recommendation.confidence,
+        rationale: sc.recommendation.rationale,
+        riskFactors: sc.recommendation.risk_factors,
+      } : null,
+      resolution: sc.resolution,
+      declineReason: sc.decline_reason,
+    };
+  }
+
+  return result;
+}
+
+const SCENARIOS = buildScenarios();
 
 // ─── Helpers ───
 const eur = (n: number) =>
