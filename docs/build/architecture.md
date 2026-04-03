@@ -71,7 +71,7 @@ Reviews the user-facing recommendation text and checks it against EU AI Act Arti
 
 ## Data
 
-The React component imports `data/synthetic_db.json` at build time — single source of truth. All dates are relative (T+N days) so data never goes stale. See `data/scenarios.md` for the full breakdown of what each SMB tests and the expected behavior.
+The React component imports `data/synthetic_db.json` at build time — single source of truth. All dates are relative (T+N days) so data never goes stale. See `docs/build/scenarios.md` for the full breakdown of what each SMB tests and the expected behavior.
 
 ---
 
