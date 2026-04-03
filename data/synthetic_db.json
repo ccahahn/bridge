@@ -2,8 +2,8 @@
   "businesses": [
     {
       "business_id": "biz_001",
-      "name": "GreenLeaf Design Studio",
-      "industry": "Creative Services",
+      "name": "Verdant Studio",
+      "industry": "Design Agency",
       "overdraft_limit": 50000,
       "overdraft_rate": 0.02,
       "current_balance": 31000,
@@ -16,8 +16,8 @@
     },
     {
       "business_id": "biz_002",
-      "name": "Nordic Freight Solutions",
-      "industry": "Logistics",
+      "name": "Norde Health",
+      "industry": "Health Tech",
       "overdraft_limit": 75000,
       "overdraft_rate": 0.02,
       "current_balance": 22000,
@@ -30,8 +30,8 @@
     },
     {
       "business_id": "biz_003",
-      "name": "Bright Path Tutoring",
-      "industry": "Education",
+      "name": "Luma Interiors",
+      "industry": "Interior Design",
       "overdraft_limit": 25000,
       "overdraft_rate": 0.02,
       "current_balance": 6000,
@@ -44,7 +44,7 @@
     },
     {
       "business_id": "biz_004",
-      "name": "Coastal Analytics",
+      "name": "Vero Analytics",
       "industry": "Data Consulting",
       "overdraft_limit": 60000,
       "overdraft_rate": 0.02,
@@ -58,7 +58,7 @@
     },
     {
       "business_id": "biz_005",
-      "name": "UrbanBrew Coffee Roasters",
+      "name": "Kova Roasters",
       "industry": "Food & Beverage",
       "overdraft_limit": 40000,
       "overdraft_rate": 0.02,

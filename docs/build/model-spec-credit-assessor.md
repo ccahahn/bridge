@@ -1,8 +1,8 @@
-## Credit Assessor — Model Spec
+## Credit Assessor — Rule Engine Spec
 
-**Role:** Decide if a specific receivable is safe to lend against.
+**Role:** Decide if a specific receivable is safe to bridge against.
 
-**Input:** A candidate from the Cash Flow Monitor — the gap context, the invoice, and the payer's full payment history.
+**Runtime:** Client-side if/else logic. No AI. Deterministic.
 
 ### Evaluation Criteria (in order)
 
@@ -11,38 +11,27 @@
 - On-time rate below 60% → decline. Too unreliable.
 
 **2. Trend Check**
-- Look at the last 5 (or fewer) payments. Are they getting WORSE over time?
-- A payer with 87% lifetime on-time rate but whose last 4 payments were all late is DETERIORATING. The average lies. Recent behavior matters more than lifetime stats.
-- If trend is "deteriorating" AND last 3+ payments were late → decline or reduce.
+- Look at last 5 (or fewer) payments. Are they getting worse?
+- A payer with 87% lifetime on-time rate but last 4 payments all late is DETERIORATING. The average lies. Recent behavior matters more than lifetime stats.
+- If trend is "deteriorating" AND last 3+ payments were late → decline.
 
 **3. Late Payment Buffer**
-- If the payer pays late, how late? Calculate: receivable_due_in_days - urgency_days. That's the buffer. If the payer's average late days exceed this buffer, the bridge might not resolve before the business needs the money.
-- Also check against Pleo's 30-day window. If average lateness means payment would arrive after 30 days past original due date, that's too much exposure.
+- If payer pays late: `receivable_due_in_days - urgency_days` = buffer. If average late days exceed this buffer, the bridge might not resolve in time.
+- Check against Pleo's 30-day window. If lateness pushes payment past 30 days from original due date → too much exposure.
 
 **4. Amount Check**
-- Recommended advance must be ≤ invoice amount (Monitor should ensure this, but verify).
+- Recommended advance must be ≤ invoice amount.
 
 **5. Business Health Check**
-- Is balance_trend "declining"? Is overdraft_usage_trend "increasing"?
-- If BOTH are true → this may be a solvency problem, not a timing problem. Decline.
-- A good payer does NOT fix a sinking business. The bridge is for timing, not survival.
+- Is `balance_trend` declining AND `overdraft_usage_trend` increasing?
+- If both → solvency problem, not timing problem. Decline.
+- A good payer does not fix a sinking business.
 
-### Decision Options
+### Decision Outcomes
 
-- **advance**: safe to bridge. State the amount and full rationale.
-- **reduce**: partially safe. Reduce the advance amount and explain why.
-- **decline**: not safe. Explain why (internally — this rationale is logged, not shown to user. The user never sees a decline. The recommendation simply doesn't surface.)
+- **Advance**: safe to bridge. Specify amount and rationale.
+- **Decline**: not safe. Recommendation does not surface. User sees nothing.
 
-### Output Schema
+### Production Note
 
-```json
-{
-  "decision": "advance | decline | reduce",
-  "advance_amount": null,
-  "rationale": "human-readable explanation of the decision",
-  "risk_factors": ["list of concerns, even on approve"],
-  "payer_reliability_score": 0.0,
-  "confidence": "high | medium | low",
-  "decline_reason": "no_history | low_reliability | deteriorating_trend | insufficient_buffer | solvency_concern"
-}
-```
+This logic is implemented as a rule engine in the prototype. In production, the assessor could be extended with an AI layer for: deteriorating trend prediction (not just detection), cross-portfolio payer risk scoring, and nuanced solvency assessment beyond two binary signals.

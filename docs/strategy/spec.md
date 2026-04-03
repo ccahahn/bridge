@@ -41,26 +41,29 @@ What doors this closes:
 
 **High-Level Architecture**
 
-Two agents in a pipeline:
+Two layers:
 
-**Cash Flow Monitor**: watches the business's ledger (balances, upcoming obligations, outstanding receivables) and knows the customer's patterns: what balance they typically maintain, how they spend around payroll cycles, what their comfortable cushion looks like. Detects when a timing gap is forming, not just "balance minus obligation" but "balance minus obligation minus the buffer this customer always keeps." Decides whether this is worth surfacing to the user. Its job is timing, relevance, and knowing just the right amount to suggest.
+**Rule engine** (no AI): The Cash Flow Monitor detects timing gaps and calculates bridge amounts. The Credit Assessor evaluates payer reliability, trend, and business health. Both are arithmetic and if/else logic — deterministic, instant, no tokens. Credit decisions should not depend on a model's mood. If the logic is expressible as rules, it should be rules.
 
-**Credit Assessor**: receives candidate invoices from the Monitor. Evaluates payer reliability (payment history, average days to pay, late payment patterns), amount relative to the gap, timing buffer, and the business's overall health. Returns one of: advance with rationale, decline with rationale, or advance at reduced amount. Its job is judgment: "is this specific receivable safe to lend against?"
+**Compliance agent** (AI): The one component that calls an LLM. Before a recommendation surfaces to the user, the compliance agent reviews the output text against EU AI Act Article 50 transparency obligations. This is genuinely an LLM problem — checking whether natural language *actually* communicates AI disclosure, data basis, and human authority, not just that the right keywords appear. The prompt is managed in Braintrust; every review is traced.
 
-The Monitor calls the Assessor, not the other way around. The user only sees the combined output: "Your payment from Acme Corp isn't due for 38 days, but you have payroll in 9 days. We can bridge €16K to cover the gap and keep your usual buffer. Want us to advance against that invoice? Here's why we think it's safe." This explanation should be compliant with EU AI Act Article 50. 
+The user sees the combined output: "Your payment from Acme Corp isn't due for 38 days, but you have payroll in 9 days. We can bridge €16K to cover the gap and keep your usual buffer." The output is packaged for two readers: the finance person who sees it first, and the decision-maker they may need to forward it to. The context, the math, and the risk are all in one view that anyone can understand in 30 seconds.
 
-The output is packaged for two readers: the finance person who sees it first, and the decision-maker they may need to forward it to. The context, the math, and the risk are all in one view that anyone can understand in 30 seconds.
-
-For the prototype: the Monitor runs against a synthetic database with relative-time ledgers (not real dates, so the data never goes stale). Real-time monitoring is simulated. The prototype shows the moment, not the surveillance loop.
+For the prototype: the rule engine runs against a synthetic database with relative-time ledgers (not real dates, so the data never goes stale). Real-time monitoring is simulated — the prototype shows the moment, not the surveillance loop.
 
 **How We'll Know It Works**
 
 Failure modes:
 
-*In the agents:*
-- The Credit Assessor approves a bridge against a payer that's about to stop paying. It looks at historical on-time rate but misses a deteriorating trend. The "risky" SMB tests this.
-- The Monitor surfaces a recommendation too early (the gap might resolve on its own) or too late (the user already scrambled). The relative-time data in the synthetic DB lets us test timing sensitivity.
-- The system declines a business that genuinely needed the bridge and had a reliable receivable. False negatives erode trust faster than false positives lose money. The "correctly declines" SMB is designed to sit right on this line. the receivable exists but the payer is unknown.
+*In the rule engine:*
+- The Credit Assessor misses a deteriorating trend hidden in a good lifetime average. The Vero Analytics scenario tests this.
+- The Monitor surfaces a recommendation when the gap might resolve on its own. The relative-time data lets us test timing sensitivity.
+- The system stays silent for a business that genuinely needed the bridge. The Luma Interiors scenario sits right on this line — the receivable exists but the payer is unknown.
+- The system approves despite a solvency problem. The Kova Roasters scenario tests this — good payer, sinking business.
+
+*In the compliance agent:*
+- The agent passes a recommendation that doesn't actually meet Article 50 (false pass). Tested by subtly weakening the disclosure language and checking if the agent catches it.
+- The agent fails a recommendation that is compliant (false fail). Tested by running the current recommendation text, which is designed to pass.
 
 *In the business:*
 - Default rates on bridged payments exceed projections. The guardrails have a kill threshold on annual default rate and a max capital deployed ceiling.
@@ -68,7 +71,7 @@ Failure modes:
 
 What I'm deliberately not measuring yet: whether the payer's own financial health is deteriorating (we're using historical payment patterns as a proxy, not assessing the payer directly). That's a deeper underwriting layer for later.
 
-All agent prompts are managed in Braintrust, not hardcoded. Every pipeline run is traced — inputs, decisions, outputs — with prompt versions pinned to each trace. This is the infrastructure for the eval loop: iterate a prompt in Braintrust, re-run, see if decisions improve or regress. Same infrastructure scales to production: prompt A/B testing, regression detection, and attaching human scores to traces after review.
+The compliance agent's prompt is managed in Braintrust (project: Bridge). Every compliance review is traced — recommendation text in, compliance assessment out, prompt version pinned. This is the infrastructure for the eval loop: iterate the prompt, re-run, see if assessments improve or regress.
 
 **Risk Model**
 
