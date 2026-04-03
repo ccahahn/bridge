@@ -7,6 +7,11 @@ Model-spec files in docs/build/ are reference copies for humans, not used at run
 import os
 import braintrust
 
+SLUGS = {
+    "cash_flow_monitor": "cash-flow-monitor-prompt-49df",
+    "credit_assessor": "credit-assessor-prompt-e211",
+}
+
 
 def _init_braintrust():
     """Ensure Braintrust API key is set."""
@@ -21,11 +26,6 @@ def _init_braintrust():
 def get_prompt(agent_name):
     """Get prompt from Braintrust project: Bridge."""
     _init_braintrust()
-    project = braintrust.projects.get("Bridge")
-    SLUGS = {
-        "cash_flow_monitor": "cash-flow-monitor-prompt-49df",
-        "credit_assessor": "credit-assessor-prompt-e211",
-    }
     slug = SLUGS.get(agent_name, agent_name)
-    prompt = project.prompts.get(slug)
+    prompt = braintrust.load_prompt(project="Bridge", slug=slug)
     return prompt.build()["messages"][0]["content"]
