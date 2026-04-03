@@ -60,12 +60,14 @@ Return ONLY valid JSON matching this schema:
 async function getSystemPrompt(): Promise<string> {
   try {
     const prompt = await loadPrompt({
-      project: "Bridge",
+      projectName: "Bridge",
       slug: "compliance-agent-prompt-4e0b",
     });
-    const built = prompt.build();
-    const messages = built.messages as Array<{ content: string }>;
-    return messages[0].content;
+    const promptData = prompt.prompt as { messages?: Array<{ content: string; role: string }> } | undefined;
+    if (promptData?.messages?.[0]?.content) {
+      return promptData.messages[0].content;
+    }
+    return FALLBACK_SYSTEM_PROMPT;
   } catch {
     return FALLBACK_SYSTEM_PROMPT;
   }
