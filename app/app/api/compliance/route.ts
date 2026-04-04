@@ -73,6 +73,8 @@ async function getSystemPrompt(): Promise<string> {
   }
 }
 
+const client = new Anthropic();
+
 export async function POST(request: Request) {
   const { recommendationText } = await request.json();
 
@@ -80,13 +82,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No recommendation text provided" }, { status: 400 });
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
+  if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: "ANTHROPIC_API_KEY not set" }, { status: 500 });
   }
 
   const systemPrompt = await getSystemPrompt();
-  const client = new Anthropic({ apiKey });
 
   const message = await client.messages.create({
     model: "claude-sonnet-4-20250514",

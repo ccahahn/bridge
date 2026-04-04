@@ -20,6 +20,24 @@ interface Scenario {
   declineReason: string | null;
 }
 
+interface ComplianceRequirement {
+  id: string;
+  label: string;
+  status: "pass" | "warn" | "fail";
+  finding: string;
+  suggestion: string | null;
+}
+
+interface ComplianceResult {
+  overall: "pass" | "warn" | "fail";
+  requirements: ComplianceRequirement[];
+  summary: string;
+  error?: string;
+}
+
+// ─── Constants ───
+const NUM_DAYS = 44;
+
 // ─── Icon map for obligation types ───
 const OBLIGATION_ICONS: Record<string, string> = {
   payroll: "\u{1F465}", rent: "\u{1F3E2}", vendor: "\u{1F4E6}", tax: "\u{1F4C4}", other: "\u{1F4CB}",
@@ -30,7 +48,8 @@ function buildScenarios(): Record<string, Scenario> {
   const result: Record<string, Scenario> = {};
 
   for (const sc of db.scenarios) {
-    const biz = db.businesses.find((b) => b.business_id === sc.business_id)!;
+    const biz = db.businesses.find((b) => b.business_id === sc.business_id);
+    if (!biz) continue;
     const obligations = db.obligations
       .filter((o) => o.business_id === sc.business_id)
       .map((o) => ({
@@ -42,15 +61,16 @@ function buildScenarios(): Record<string, Scenario> {
         icon: OBLIGATION_ICONS[o.type] || OBLIGATION_ICONS.other,
       }));
 
-    const payer = db.payers.find((p) => p.payer_id === sc.primary_payer_id)!;
+    const payer = db.payers.find((p) => p.payer_id === sc.primary_payer_id);
+    if (!payer) continue;
 
     const receivables = db.receivables
       .filter((r) => r.business_id === sc.business_id)
       .map((r) => {
-        const rPayer = db.payers.find((p) => p.payer_id === r.payer_id)!;
+        const rPayer = db.payers.find((p) => p.payer_id === r.payer_id);
         return {
           id: r.receivable_id,
-          payer: rPayer.payer_name,
+          payer: rPayer?.payer_name ?? "Unknown",
           amount: r.invoice_amount,
           dueDay: r.due_in_days,
           description: r.description,
@@ -103,7 +123,7 @@ const SCENARIOS = buildScenarios();
 const eur = (n: number) =>
   new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
 
-function projectBalance(scenario: Scenario, numDays = 45) {
+function projectBalance(scenario: Scenario, numDays = NUM_DAYS) {
   const points: { day: number; balance: number }[] = [];
   let bal = scenario.balance;
   for (let d = 0; d <= numDays; d++) {
@@ -116,7 +136,7 @@ function projectBalance(scenario: Scenario, numDays = 45) {
   return points;
 }
 
-function projectWithBridge(scenario: Scenario, numDays = 45) {
+function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS) {
   if (!scenario.recommendation) return null;
   const points: { day: number; balance: number }[] = [];
   let bal = scenario.balance;
@@ -141,15 +161,15 @@ function CashFlowChart({ scenario, currentDay, approved }: { scenario: Scenario;
   const iw = width - pad.l - pad.r;
   const ih = height - pad.t - pad.b;
 
-  const baseline = projectBalance(scenario, 44);
-  const bridged = approved ? projectWithBridge(scenario, 44) : null;
+  const baseline = projectBalance(scenario);
+  const bridged = approved ? projectWithBridge(scenario) : null;
   const allVals = baseline.map((p) => p.balance);
   if (bridged) bridged.forEach((p) => allVals.push(p.balance));
   const minBal = Math.min(...allVals, 0);
   const maxBal = Math.max(...allVals);
   const range = maxBal - minBal || 1;
 
-  const x = (d: number) => pad.l + (d / 44) * iw;
+  const x = (d: number) => pad.l + (d / NUM_DAYS) * iw;
   const y = (v: number) => pad.t + ih - ((v - minBal) / range) * ih;
 
   const toPath = (pts: { day: number; balance: number }[], upTo: number) => {
@@ -233,13 +253,13 @@ export default function PleoBridgeDemo() {
   const [resolved, setResolved] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showScenarioMenu, setShowScenarioMenu] = useState(false);
-  const [complianceResult, setComplianceResult] = useState<Record<string, unknown> | null>(null);
+  const [complianceResult, setComplianceResult] = useState<ComplianceResult | null>(null);
   const [complianceLoading, setComplianceLoading] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const scenario = SCENARIOS[activeScenario];
-  const baseline = projectBalance(scenario, 44);
-  const bridged = approved ? projectWithBridge(scenario, 44) : null;
+  const baseline = projectBalance(scenario);
+  const bridged = approved ? projectWithBridge(scenario) : null;
   const currentBalance = (approved && bridged ? bridged : baseline).find((p) => p.day === currentDay)?.balance ?? scenario.balance;
 
   const gapDay = scenario.obligations[0]?.dueDay - 2;
@@ -247,13 +267,14 @@ export default function PleoBridgeDemo() {
   const shouldShowDecline = !scenario.recommendation && scenario.declineReason && currentDay >= (gapDay > 0 ? gapDay : 7);
   const shouldResolve = scenario.resolution && approved && currentDay >= scenario.resolution.day;
 
-  useEffect(() => { if (shouldShowRec && !approved) setShowRecommendation(true); }, [shouldShowRec, approved]);
+  useEffect(() => { if (shouldShowRec && !approved) { setShowRecommendation(true); setPlaying(false); } }, [shouldShowRec, approved]);
+  useEffect(() => { if (shouldShowDecline) setPlaying(false); }, [shouldShowDecline]);
   useEffect(() => { if (shouldResolve && !resolved) setResolved(true); }, [shouldResolve, resolved]);
 
   useEffect(() => {
     if (playing) {
       intervalRef.current = setInterval(() => {
-        setCurrentDay((d) => { if (d >= 44) { setPlaying(false); return 44; } return d + 1; });
+        setCurrentDay((d) => { if (d >= NUM_DAYS) { setPlaying(false); return NUM_DAYS; } return d + 1; });
       }, 400);
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
@@ -291,7 +312,7 @@ export default function PleoBridgeDemo() {
       const data = await res.json();
       setComplianceResult(data);
     } catch {
-      setComplianceResult({ error: "Failed to reach compliance API" });
+      setComplianceResult({ error: "Failed to reach compliance API", overall: "fail", requirements: [], summary: "" });
     } finally {
       setComplianceLoading(false);
     }
@@ -303,8 +324,7 @@ export default function PleoBridgeDemo() {
   const balanceColor = currentBalance < 0 ? "#d94f4f" : currentBalance < scenario.buffer ? "#e0a030" : "#1a1a2e";
 
   return (
-    <div style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", background: "#f6f6f8", minHeight: "100vh", display: "flex", color: "#1a1a2e" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ fontFamily: "var(--font-dm-sans), 'DM Sans', 'Helvetica Neue', sans-serif", background: "#f6f6f8", minHeight: "100vh", display: "flex", color: "#1a1a2e" }}>
 
       {/* Sidebar */}
       <div style={{ width: 200, background: "#fff", borderRight: "1px solid #e8e8ec", display: "flex", flexDirection: "column", padding: "24px 0", flexShrink: 0 }}>
@@ -389,7 +409,6 @@ export default function PleoBridgeDemo() {
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft</div>
               <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(scenario.overdraftLimit)}</div>
-              <div style={{ fontSize: 11, color: "#8c8c9a", marginTop: 4 }}>2.0% annual</div>
             </div>
           </div>
 
@@ -403,7 +422,7 @@ export default function PleoBridgeDemo() {
                   <span><span style={{ display: "inline-block", width: 10, height: 2, background: "#e0b040", marginRight: 4, verticalAlign: "middle" }}></span>Buffer</span>
                 </div>
               </div>
-              <input type="range" min={0} max={44} value={currentDay} onChange={(e) => { setCurrentDay(parseInt(e.target.value)); setPlaying(false); }} style={{ width: "100%", marginBottom: 8, accentColor: "#1a1a2e" }} />
+              <input type="range" min={0} max={NUM_DAYS} value={currentDay} onChange={(e) => { setCurrentDay(parseInt(e.target.value)); setPlaying(false); }} style={{ width: "100%", marginBottom: 8, accentColor: "#1a1a2e" }} />
               <CashFlowChart scenario={scenario} currentDay={currentDay} approved={approved} />
             </div>
 
@@ -531,18 +550,18 @@ export default function PleoBridgeDemo() {
                 </div>
 
                 {/* Compliance review panel */}
-                {complianceResult && !("error" in complianceResult) && (
+                {complianceResult && !complianceResult.error && (
                   <div style={{ marginTop: 20, background: "#f8f8fa", borderRadius: 10, padding: "16px 20px", border: "1px solid #e0e0e6", animation: "slideIn 0.4s ease-out" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                       <div style={{ fontSize: 12, fontWeight: 600, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.05em" }}>EU AI Act Article 50 Review</div>
                       <span style={{
                         fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 10,
-                        background: (complianceResult as Record<string, string>).overall === "pass" ? "#e6f5ee" : (complianceResult as Record<string, string>).overall === "warn" ? "#fef8e8" : "#fde8e8",
-                        color: (complianceResult as Record<string, string>).overall === "pass" ? "#0f7a52" : (complianceResult as Record<string, string>).overall === "warn" ? "#8a6d1b" : "#c53030",
-                      }}>{((complianceResult as Record<string, string>).overall || "").toUpperCase()}</span>
+                        background: complianceResult.overall === "pass" ? "#e6f5ee" : complianceResult.overall === "warn" ? "#fef8e8" : "#fde8e8",
+                        color: complianceResult.overall === "pass" ? "#0f7a52" : complianceResult.overall === "warn" ? "#8a6d1b" : "#c53030",
+                      }}>{(complianceResult.overall || "").toUpperCase()}</span>
                     </div>
 
-                    {((complianceResult as Record<string, unknown>).requirements as Array<Record<string, string>>)?.map((req) => (
+                    {complianceResult.requirements?.map((req) => (
                       <div key={req.id} style={{ padding: "10px 0", borderBottom: "1px solid #e8e8ec" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                           <div style={{ fontSize: 13, fontWeight: 600 }}>{req.label}</div>
@@ -557,14 +576,14 @@ export default function PleoBridgeDemo() {
                       </div>
                     ))}
 
-                    {(complianceResult as Record<string, string>).summary && (
-                      <div style={{ marginTop: 12, fontSize: 12, color: "#8c8c9a", fontStyle: "italic" }}>{(complianceResult as Record<string, string>).summary}</div>
+                    {complianceResult.summary && (
+                      <div style={{ marginTop: 12, fontSize: 12, color: "#8c8c9a", fontStyle: "italic" }}>{complianceResult.summary}</div>
                     )}
                   </div>
                 )}
 
-                {complianceResult && "error" in complianceResult && (
-                  <div style={{ marginTop: 16, fontSize: 12, color: "#c53030" }}>Compliance review failed: {(complianceResult as Record<string, string>).error}</div>
+                {complianceResult?.error && (
+                  <div style={{ marginTop: 16, fontSize: 12, color: "#c53030" }}>Compliance review failed: {complianceResult.error}</div>
                 )}
               </div>
             </div>
