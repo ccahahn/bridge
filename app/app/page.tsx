@@ -382,11 +382,12 @@ export default function PleoBridgeDemo() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ fontSize: 12, color: "#8c8c9a", fontWeight: 500, background: "#f0f0f4", padding: "6px 14px", borderRadius: 20 }}>Day T+{currentDay}</div>
-            <button onClick={reset} style={{ padding: "7px 14px", background: "#f6f6f8", border: "1px solid #e0e0e6", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", color: "#1a1a2e" }}>Reset</button>
+            <button onClick={reset} style={{ padding: "9px 18px", background: "#f6f6f8", border: "1px solid #e0e0e6", borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", color: "#1a1a2e" }}>Reset</button>
             <button onClick={() => setPlaying(!playing)} style={{
-              padding: "7px 18px", background: playing ? "#1a1a2e" : "#fff", color: playing ? "#fff" : "#1a1a2e",
-              border: "1px solid #1a1a2e", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s",
-            }}>{playing ? "\u23F8 Pause" : "\u25B6 Play"}</button>
+              padding: "10px 28px", background: playing ? "#1a1a2e" : "#4a40d4", color: "#fff",
+              border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s",
+              boxShadow: playing ? "none" : "0 2px 8px rgba(74, 64, 212, 0.3)",
+            }}>{playing ? "\u23F8 Pause" : "\u25B6 Play scenario"}</button>
           </div>
         </div>
 
