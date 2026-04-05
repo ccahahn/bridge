@@ -276,7 +276,7 @@
       "business_id": "biz_006",
       "payer_id": "pyr_009",
       "invoice_amount": 25000,
-      "due_in_days": 44,
+      "due_in_days": 50,
       "description": "April corporate events catering - Nordic Events"
     }
   ],

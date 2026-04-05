@@ -23,7 +23,7 @@ interface Scenario {
 }
 
 // ─── Constants ───
-const NUM_DAYS = 44;
+const NUM_DAYS = 55;
 
 // ─── Icon map for obligation types ───
 const OBLIGATION_ICONS: Record<string, string> = {
@@ -178,7 +178,7 @@ function CashFlowChart({ scenario, currentDay, approved }: { scenario: Scenario;
   };
 
   const bufferY = y(scenario.buffer);
-  const dayLabels = [0, 7, 14, 21, 28, 35, 42];
+  const dayLabels = Array.from({ length: Math.floor(NUM_DAYS / 7) + 1 }, (_, i) => i * 7);
   const isDanger = baseline.some((p) => p.day <= currentDay && p.balance < scenario.buffer);
 
   return (
