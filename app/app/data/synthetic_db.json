@@ -225,7 +225,7 @@
       "business_id": "biz_001",
       "payer_id": "pyr_002",
       "invoice_amount": 8000,
-      "due_in_days": 45,
+      "due_in_days": 40,
       "description": "Logo refresh - Bloom Bakery"
     },
 
