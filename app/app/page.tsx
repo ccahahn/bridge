@@ -328,7 +328,7 @@ export default function PleoBridgeDemo() {
   }, [scenario]);
 
   const switchScenario = (id: string) => { setActiveScenario(id); setShowScenarioMenu(false); reset(); };
-  const handleApprove = () => { setApproved(true); setShowRecommendation(false); };
+  const handleApprove = () => { setApproved(true); setShowRecommendation(false); setPlaying(true); };
 
   const balanceColor = currentBalance < 0 ? "#d94f4f" : currentBalance < scenario.buffer ? "#e0a030" : "#1a1a2e";
 
