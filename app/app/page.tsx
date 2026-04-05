@@ -22,21 +22,6 @@ interface Scenario {
   secondCycle: { obligationDay: number; declineReason: string } | null;
 }
 
-interface ComplianceRequirement {
-  id: string;
-  label: string;
-  status: "pass" | "warn" | "fail";
-  finding: string;
-  suggestion: string | null;
-}
-
-interface ComplianceResult {
-  overall: "pass" | "warn" | "fail";
-  requirements: ComplianceRequirement[];
-  summary: string;
-  error?: string;
-}
-
 // ─── Constants ───
 const NUM_DAYS = 44;
 
@@ -260,8 +245,6 @@ export default function PleoBridgeDemo() {
   const [resolved, setResolved] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showScenarioMenu, setShowScenarioMenu] = useState(false);
-  const [complianceResult, setComplianceResult] = useState<ComplianceResult | null>(null);
-  const [complianceLoading, setComplianceLoading] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const scenario = SCENARIOS[activeScenario];
@@ -291,41 +274,7 @@ export default function PleoBridgeDemo() {
 
   const reset = useCallback(() => {
     setCurrentDay(0); setShowRecommendation(false); setApproved(false); setResolved(false); setPlaying(false);
-    setComplianceResult(null); setComplianceLoading(false);
   }, []);
-
-  const runComplianceReview = useCallback(async () => {
-    if (!scenario.recommendation) return;
-    setComplianceLoading(true);
-    setComplianceResult(null);
-    const recText = [
-      `AI-generated recommendation - Invoice Bridge`,
-      `Your payment from ${scenario.receivables[0].payer} isn't due for ${scenario.receivables[0].dueDay - currentDay} days, but you have ${scenario.obligations[0].type} in ${scenario.obligations[0].dueDay - currentDay} days. We can bridge ${eur(scenario.recommendation.amount)} to cover the gap and keep your usual buffer.`,
-      `How we assessed this:`,
-      `- Payer reliability: ${scenario.payer.paidOnTime}/${scenario.payer.totalInvoices} on time (${((scenario.payer.onTimeRate || 0) * 100).toFixed(0)}%)`,
-      `- Average days to pay: ${scenario.payer.avgDaysToPay} days, trend: ${scenario.payer.trend}`,
-      `- Gap calculation: ${eur(scenario.recommendation.gapBreakdown.obligation)} obligation - ${eur(scenario.recommendation.gapBreakdown.balance)} balance - ${eur(scenario.recommendation.gapBreakdown.buffer)} buffer`,
-      `- Confidence: ${scenario.recommendation.confidence}`,
-      scenario.recommendation.riskFactors.length > 0 ? `Risk factors: ${scenario.recommendation.riskFactors.join("; ")}` : "",
-      `When the advance resolves: When ${scenario.receivables[0].payer} pays this invoice, we automatically apply ${eur(scenario.recommendation.amount)} back to your balance. No action needed.`,
-      `This recommendation was generated automatically by Pleo's credit assessment system. The final decision is yours.`,
-      `[Approve Bridge] [Not now]`,
-    ].filter(Boolean).join("\n");
-
-    try {
-      const res = await fetch("/api/compliance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recommendationText: recText }),
-      });
-      const data = await res.json();
-      setComplianceResult(data);
-    } catch {
-      setComplianceResult({ error: "Failed to reach compliance API", overall: "fail", requirements: [], summary: "" });
-    } finally {
-      setComplianceLoading(false);
-    }
-  }, [scenario]);
 
   const switchScenario = (id: string) => { setActiveScenario(id); setShowScenarioMenu(false); reset(); };
   const handleApprove = () => { setApproved(true); setShowRecommendation(false); setPlaying(true); };
@@ -513,50 +462,7 @@ export default function PleoBridgeDemo() {
                     padding: "12px 24px", background: "#fff", color: "#8c8c9a", border: "1px solid #e0e0e6",
                     borderRadius: 10, fontSize: 14, fontWeight: 500, cursor: "pointer", fontFamily: "inherit",
                   }}>Not now</button>
-                  <div style={{ flex: 1 }} />
-                  <button onClick={runComplianceReview} disabled={complianceLoading} style={{
-                    padding: "8px 16px", background: "#f0f0f4", color: "#1a1a2e", border: "1px solid #e0e0e6",
-                    borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: complianceLoading ? "wait" : "pointer", fontFamily: "inherit",
-                    opacity: complianceLoading ? 0.6 : 1,
-                  }}>{complianceLoading ? "Reviewing..." : "\u{1F6E1}\uFE0F Run Article 50 Review"}</button>
                 </div>
-
-                {/* Compliance review panel */}
-                {complianceResult && !complianceResult.error && (
-                  <div style={{ marginTop: 20, background: "#f8f8fa", borderRadius: 10, padding: "16px 20px", border: "1px solid #e0e0e6", animation: "slideIn 0.4s ease-out" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.05em" }}>EU AI Act Article 50 Review</div>
-                      <span style={{
-                        fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 10,
-                        background: complianceResult.overall === "pass" ? "#e6f5ee" : complianceResult.overall === "warn" ? "#fef8e8" : "#fde8e8",
-                        color: complianceResult.overall === "pass" ? "#0f7a52" : complianceResult.overall === "warn" ? "#8a6d1b" : "#c53030",
-                      }}>{(complianceResult.overall || "").toUpperCase()}</span>
-                    </div>
-
-                    {complianceResult.requirements?.map((req) => (
-                      <div key={req.id} style={{ padding: "10px 0", borderBottom: "1px solid #e8e8ec" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                          <div style={{ fontSize: 13, fontWeight: 600 }}>{req.label}</div>
-                          <span style={{
-                            fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 8,
-                            background: req.status === "pass" ? "#e6f5ee" : req.status === "warn" ? "#fef8e8" : "#fde8e8",
-                            color: req.status === "pass" ? "#0f7a52" : req.status === "warn" ? "#8a6d1b" : "#c53030",
-                          }}>{req.status.toUpperCase()}</span>
-                        </div>
-                        <div style={{ fontSize: 12, color: "#666", lineHeight: 1.5 }}>{req.finding}</div>
-                        {req.suggestion && <div style={{ fontSize: 11, color: "#a08020", marginTop: 4 }}>{"\u{1F4A1}"} {req.suggestion}</div>}
-                      </div>
-                    ))}
-
-                    {complianceResult.summary && (
-                      <div style={{ marginTop: 12, fontSize: 12, color: "#8c8c9a", fontStyle: "italic" }}>{complianceResult.summary}</div>
-                    )}
-                  </div>
-                )}
-
-                {complianceResult?.error && (
-                  <div style={{ marginTop: 16, fontSize: 12, color: "#c53030" }}>Compliance review failed: {complianceResult.error}</div>
-                )}
               </div>
             </div>
           )}
