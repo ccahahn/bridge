@@ -7,14 +7,14 @@
       "tagline": "Healthy business, reliable payer, timing gap",
       "primary_payer_id": "pyr_001",
       "recommendation": {
-        "amount": 16000,
-        "gap_breakdown": { "obligation": 42000, "balance": 31000, "buffer": 5000, "shortfall": 11000 },
+        "amount": 20500,
+        "gap_breakdown": { "obligation": 46500, "balance": 31000, "buffer": 5000, "shortfall": 15500 },
         "decision": "advance",
         "confidence": "high",
-        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of \u20ac16,000 covers your payroll gap plus your typical \u20ac5,000 buffer. We bridge the timing, not the invoice.",
+        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of \u20ac20,500 covers your payroll and rent plus your typical \u20ac5,000 buffer. We bridge the timing, not the invoice.",
         "risk_factors": ["One late payment in last 12 invoices (35 days vs 30-day term)"]
       },
-      "resolution": { "day": 35, "message": "Acme Corp paid invoice #INV-2024-038. \u20ac16,000 bridge auto-resolved." },
+      "resolution": { "day": 35, "message": "Acme Corp paid invoice #INV-2024-038. \u20ac20,500 bridge auto-resolved." },
       "decline_reason": null
     },
     {
@@ -217,7 +217,7 @@
       "business_id": "biz_001",
       "payer_id": "pyr_001",
       "invoice_amount": 50000,
-      "due_in_days": 36,
+      "due_in_days": 35,
       "description": "Q1 brand identity project - Acme Corp"
     },
     {
