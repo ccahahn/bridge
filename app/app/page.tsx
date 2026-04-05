@@ -512,8 +512,8 @@ export default function PleoBridgeDemo() {
                 <div style={{ fontSize: 13, color: "#4a4a48", lineHeight: 1.7, maxWidth: 560 }}>
                   {scenario.secondCycle.declineReason}
                 </div>
-                <div style={{ marginTop: 16, fontSize: 11, color: "#8c8c9a", fontStyle: "italic" }}>
-                  We&apos;d rather be honest now than let you find out at payroll.
+                <div style={{ marginTop: 16, fontSize: 12, color: "#8a6d1b" }}>
+                  You can activate your overdraft to cover this gap, or reach out to {scenario.payer.name} about their payment timeline.
                 </div>
               </div>
             </div>
