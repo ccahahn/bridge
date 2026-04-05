@@ -416,7 +416,7 @@ export default function PleoBridgeDemo() {
               <div style={{ fontSize: 26, fontWeight: 700, color: "#0f8a5f" }}>{eur(scenario.receivables.reduce((s, r) => s + r.amount, 0))}</div>
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
-              <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft</div>
+              <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft Limit</div>
               <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(scenario.overdraftLimit)}</div>
             </div>
           </div>
