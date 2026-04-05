@@ -348,6 +348,7 @@ export default function PleoBridgeDemo() {
           }}>
             {scenario.name}<span style={{ float: "right", color: "#8c8c9a" }}>{"\u25BE"}</span>
           </button>
+          <div style={{ fontSize: 11, color: "#8c8c9a", padding: "6px 8px 0", lineHeight: 1.4 }}>{scenario.tagline}</div>
 
           {showScenarioMenu && (
             <div style={{
