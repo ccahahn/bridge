@@ -483,71 +483,23 @@ export default function PleoBridgeDemo() {
               }}>{"\u{1F916}"} AI-generated recommendation {"\u00B7"} Invoice Bridge</div>
 
               <div style={{ padding: "24px 28px" }}>
-                <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.4, marginBottom: 16 }}>
+                <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}>
                   Your payment from <span style={{ color: "#0f8a5f" }}>{scenario.receivables[0].payer}</span> isn&apos;t due for {scenario.receivables[0].dueDay} days, but you have {scenario.obligations[0].label.toLowerCase()} in <span style={{ color: "#d94f4f" }}>{scenario.obligations[0].dueDay} days</span>.
                   {" "}We can bridge <strong>{eur(scenario.recommendation.amount)}</strong> to cover the gap and keep your usual buffer.
                 </div>
 
-                <div style={{ background: "#f8f8fa", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>How we assessed this</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <div>
-                      <div style={{ fontSize: 11, color: "#8c8c9a", marginBottom: 4 }}>Payer reliability</div>
-                      <div style={{ fontSize: 14, fontWeight: 600 }}>
-                        {scenario.payer.paidOnTime}/{scenario.payer.totalInvoices} on time
-                        <span style={{ marginLeft: 8, fontSize: 11, padding: "2px 8px", borderRadius: 10, background: "#e6f5ee", color: "#0f7a52" }}>
-                          {((scenario.payer.onTimeRate || 0) * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 11, color: "#8c8c9a", marginBottom: 4 }}>Avg days to pay</div>
-                      <div style={{ fontSize: 14, fontWeight: 600 }}>{scenario.payer.avgDaysToPay} days
-                        <span style={{ marginLeft: 8, fontSize: 11, padding: "2px 8px", borderRadius: 10, background: "#e6f5ee", color: "#0f7a52" }}>{scenario.payer.trend}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 11, color: "#8c8c9a", marginBottom: 4 }}>Gap calculation</div>
-                      <div style={{ fontSize: 13, fontWeight: 500 }}>{eur(scenario.recommendation.gapBreakdown.obligation)} obligation {"\u2212"} {eur(scenario.recommendation.gapBreakdown.balance)} balance {"\u2212"} {eur(scenario.recommendation.gapBreakdown.buffer)} buffer</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 11, color: "#8c8c9a", marginBottom: 4 }}>Confidence</div>
-                      <div style={{ fontSize: 14, fontWeight: 600, textTransform: "capitalize" }}>{scenario.recommendation.confidence}</div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: 14 }}>
-                    <div style={{ fontSize: 11, color: "#8c8c9a", marginBottom: 6 }}>Last 5 payments</div>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      {scenario.payer.last5.map((p, i) => (
-                        <div key={i} style={{ flex: 1, padding: "6px 0", textAlign: "center", fontSize: 11, fontWeight: 500, borderRadius: 6, background: p.onTime ? "#e6f5ee" : "#fde8e8", color: p.onTime ? "#0f7a52" : "#c53030" }}>
-                          {p.days}d {p.onTime ? "\u2713" : "\u2717"}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                <div style={{ fontSize: 13, color: "#8c8c9a", marginBottom: 20 }}>
+                  No interest. Auto-resolves when {scenario.receivables[0].payer} pays.
                 </div>
 
-                {scenario.recommendation.riskFactors.length > 0 && (
-                  <div style={{ marginBottom: 16 }}>
-                    {scenario.recommendation.riskFactors.map((rf, i) => (
-                      <div key={i} style={{ fontSize: 12, color: "#a08020", padding: "4px 0", display: "flex", gap: 6 }}><span>{"\u26A0"}</span> {rf}</div>
-                    ))}
-                  </div>
-                )}
-
                 {scenario.warning && (
-                  <div style={{ marginBottom: 16, padding: "14px 18px", background: "#fef8e8", border: "1px solid #f0e0a0", borderRadius: 10 }}>
+                  <div style={{ marginBottom: 20, padding: "14px 18px", background: "#fef8e8", border: "1px solid #f0e0a0", borderRadius: 10 }}>
                     <div style={{ fontSize: 12, fontWeight: 600, color: "#8a6d1b", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
                       <span>{"\u26A0"}</span> Heads up about {scenario.payer.name}
                     </div>
                     <div style={{ fontSize: 12, color: "#6b5a1a", lineHeight: 1.6 }}>{scenario.warning}</div>
                   </div>
                 )}
-
-                <div style={{ fontSize: 12, color: "#8c8c9a", marginBottom: 20, padding: "10px 14px", background: "#f8f8fa", borderRadius: 8 }}>
-                  <strong>When the advance resolves:</strong> When {scenario.receivables[0].payer} pays this invoice, we automatically apply {eur(scenario.recommendation.amount)} back to your balance. No action needed.
-                </div>
 
                 <div style={{ fontSize: 11, color: "#b0b0ba", marginBottom: 20 }}>This recommendation was generated automatically by Pleo&apos;s credit assessment system. The final decision is yours.</div>
 
