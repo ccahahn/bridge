@@ -509,7 +509,7 @@ export default function PleoBridgeDemo() {
                     padding: "12px 32px", background: "#0f8a5f", color: "#fff", border: "none", borderRadius: 10,
                     fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
                   }}>Approve Bridge</button>
-                  <button onClick={() => setShowRecommendation(false)} style={{
+                  <button onClick={() => { setShowRecommendation(false); setPlaying(true); }} style={{
                     padding: "12px 24px", background: "#fff", color: "#8c8c9a", border: "1px solid #e0e0e6",
                     borderRadius: 10, fontSize: 14, fontWeight: 500, cursor: "pointer", fontFamily: "inherit",
                   }}>Not now</button>
