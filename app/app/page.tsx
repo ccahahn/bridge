@@ -417,7 +417,8 @@ export default function PleoBridgeDemo() {
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft Limit</div>
-              <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(scenario.overdraftLimit)}</div>
+              <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(approved && !resolved && scenario.recommendation ? scenario.overdraftLimit - scenario.recommendation.amount : scenario.overdraftLimit)}</div>
+              {approved && !resolved && scenario.recommendation && <div style={{ fontSize: 11, color: "#e0a030", marginTop: 4 }}>{eur(scenario.recommendation.amount)} reserved for bridge</div>}
             </div>
           </div>
 
