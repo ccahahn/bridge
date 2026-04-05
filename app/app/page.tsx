@@ -513,7 +513,7 @@ export default function PleoBridgeDemo() {
                   {scenario.secondCycle.declineReason}
                 </div>
                 <div style={{ marginTop: 16, fontSize: 12, color: "#8a6d1b" }}>
-                  You can activate your overdraft to cover this gap, or reach out to {scenario.payer.name} about their payment timeline.
+                  You can add funds or activate your overdraft to cover this gap.
                 </div>
               </div>
             </div>
