@@ -409,12 +409,14 @@ export default function PleoBridgeDemo() {
               {approved && scenario.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge active {"\u00B7"} {eur(scenario.recommendation.amount)}</div>}
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
-              <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Outgoing (30d)</div>
+              <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Outgoing</div>
               <div style={{ fontSize: 26, fontWeight: 700, color: "#d94f4f" }}>{eur(scenario.obligations.reduce((s, o) => s + o.amount, 0))}</div>
+              <div style={{ fontSize: 11, color: "#8c8c9a", marginTop: 4 }}>{scenario.obligations.map((o) => `T+${o.dueDay}`).join(", ")}</div>
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Incoming</div>
               <div style={{ fontSize: 26, fontWeight: 700, color: "#0f8a5f" }}>{eur(scenario.receivables.reduce((s, r) => s + r.amount, 0))}</div>
+              <div style={{ fontSize: 11, color: "#8c8c9a", marginTop: 4 }}>{scenario.receivables.map((r) => `T+${r.dueDay}`).join(", ")}</div>
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft Limit</div>
