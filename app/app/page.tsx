@@ -515,6 +515,9 @@ export default function PleoBridgeDemo() {
                 <div style={{ marginTop: 16, fontSize: 12, color: "#8a6d1b" }}>
                   You can add funds or activate your overdraft to cover this gap.
                 </div>
+                <div style={{ marginTop: 8, fontSize: 11, color: "#8c8c9a", fontStyle: "italic" }}>
+                  We prefer to be honest now than let you find out at payroll.
+                </div>
               </div>
             </div>
           )}

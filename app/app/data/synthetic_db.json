@@ -270,6 +270,14 @@
       "invoice_amount": 28000,
       "due_in_days": 33,
       "description": "March corporate events catering - Nordic Events"
+    },
+    {
+      "receivable_id": "rec_011",
+      "business_id": "biz_006",
+      "payer_id": "pyr_009",
+      "invoice_amount": 25000,
+      "due_in_days": 44,
+      "description": "April corporate events catering - Nordic Events"
     }
   ],
 
