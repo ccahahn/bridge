@@ -18,6 +18,8 @@ interface Scenario {
   obligations: Obligation[]; receivables: Receivable[]; payer: Payer;
   recommendation: Recommendation | null; resolution: Resolution | null;
   declineReason: string | null;
+  warning: string | null;
+  secondCycle: { obligationDay: number; declineReason: string } | null;
 }
 
 interface ComplianceRequirement {
@@ -111,6 +113,11 @@ function buildScenarios(): Record<string, Scenario> {
       } : null,
       resolution: sc.resolution,
       declineReason: sc.decline_reason,
+      warning: sc.warning || null,
+      secondCycle: sc.second_cycle ? {
+        obligationDay: sc.second_cycle.obligation_day,
+        declineReason: sc.second_cycle.decline_reason,
+      } : null,
     };
   }
 
@@ -266,10 +273,12 @@ export default function PleoBridgeDemo() {
   const shouldShowRec = scenario.recommendation && currentDay >= (gapDay > 0 ? gapDay : 7);
   const shouldShowDecline = !scenario.recommendation && scenario.declineReason && currentDay >= (gapDay > 0 ? gapDay : 7);
   const shouldResolve = scenario.resolution && approved && currentDay >= scenario.resolution.day;
+  const shouldShowSecondDecline = scenario.secondCycle && resolved && currentDay >= (scenario.secondCycle.obligationDay - 2);
 
   useEffect(() => { if (shouldShowRec && !approved) { setShowRecommendation(true); setPlaying(false); } }, [shouldShowRec, approved]);
   useEffect(() => { if (shouldShowDecline) setPlaying(false); }, [shouldShowDecline]);
   useEffect(() => { if (shouldResolve && !resolved) setResolved(true); }, [shouldResolve, resolved]);
+  useEffect(() => { if (shouldShowSecondDecline) setPlaying(false); }, [shouldShowSecondDecline]);
 
   useEffect(() => {
     if (playing) {
@@ -526,6 +535,15 @@ export default function PleoBridgeDemo() {
                   </div>
                 )}
 
+                {scenario.warning && (
+                  <div style={{ marginBottom: 16, padding: "14px 18px", background: "#fef8e8", border: "1px solid #f0e0a0", borderRadius: 10 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#8a6d1b", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                      <span>{"\u26A0"}</span> Heads up about {scenario.payer.name}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#6b5a1a", lineHeight: 1.6 }}>{scenario.warning}</div>
+                  </div>
+                )}
+
                 <div style={{ fontSize: 12, color: "#8c8c9a", marginBottom: 20, padding: "10px 14px", background: "#f8f8fa", borderRadius: 8 }}>
                   <strong>When the advance resolves:</strong> When {scenario.receivables[0].payer} pays this invoice, we automatically apply {eur(scenario.recommendation.amount)} back to your balance. No action needed.
                 </div>
@@ -616,6 +634,27 @@ export default function PleoBridgeDemo() {
               </div>
               <div style={{ marginTop: 16, fontSize: 12, color: "#8c8c9a", fontStyle: "italic" }}>
                 This is the product working, not the product failing.
+              </div>
+            </div>
+          )}
+
+          {/* Graceful decline — second cycle after a successful bridge */}
+          {shouldShowSecondDecline && scenario.secondCycle && (
+            <div style={{
+              background: "#fff", border: "1px solid #f0e0a0", borderRadius: 14, padding: 0,
+              marginBottom: 24, overflow: "hidden", animation: "slideIn 0.5s ease-out",
+            }}>
+              <div style={{
+                background: "#fef8e8", padding: "10px 24px", fontSize: 12, fontWeight: 500, color: "#8a6d1b",
+                display: "flex", alignItems: "center", gap: 8,
+              }}>About your next cycle</div>
+              <div style={{ padding: "24px 28px" }}>
+                <div style={{ fontSize: 13, color: "#4a4a48", lineHeight: 1.7, maxWidth: 560 }}>
+                  {scenario.secondCycle.declineReason}
+                </div>
+                <div style={{ marginTop: 16, fontSize: 11, color: "#8c8c9a", fontStyle: "italic" }}>
+                  We&apos;d rather be honest now than let you find out at payroll.
+                </div>
               </div>
             </div>
           )}

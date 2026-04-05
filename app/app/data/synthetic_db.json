@@ -40,12 +40,20 @@
     {
       "id": "deteriorating",
       "business_id": "biz_004",
-      "label": "The average lies",
-      "tagline": "Great lifetime stats hide a deteriorating trend",
+      "label": "Bridge with caution",
+      "tagline": "Good lifetime stats, concerning recent trend",
       "primary_payer_id": "pyr_006",
-      "recommendation": null,
-      "resolution": null,
-      "decline_reason": "TrustBank looks great on paper \u2014 13 of 15 invoices paid on time (87%). But the last 4 payments have been late and getting worse: 35 \u2192 38 \u2192 42 \u2192 45 days. The average lies. Recent behavior matters more than lifetime stats."
+      "recommendation": {
+        "amount": 44000,
+        "gap_breakdown": { "obligation": 56000, "balance": 18000, "buffer": 6000, "shortfall": 38000 },
+        "decision": "advance",
+        "confidence": "medium",
+        "rationale": "TrustBank has paid 13 of 15 invoices on time (87%) with an average of 30 days. The bridge of \u20ac44,000 covers your payroll and VAT payments plus your typical \u20ac6,000 buffer. Their recent payments have been slowing, which we\u2019re watching.",
+        "risk_factors": ["TrustBank\u2019s last 4 payments trending later: 35 \u2192 38 \u2192 42 \u2192 45 days"]
+      },
+      "warning": "We\u2019ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days \u2014 up from their usual average of 30. We\u2019re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with TrustBank or setting up your overdraft as a backup.",
+      "resolution": { "day": 31, "message": "TrustBank paid invoice #INV-2024-092. \u20ac44,000 bridge auto-resolved." },
+      "decline_reason": null
     },
     {
       "id": "solvency",
@@ -56,6 +64,28 @@
       "recommendation": null,
       "resolution": null,
       "decline_reason": "HotelGroup Nordic is a reliable payer (10 of 11 on time). But Kova Roasters\u2019 balance is declining and overdraft usage is increasing. Obligations (\u20ac51,000) outpace receivables (\u20ac47,000). This isn\u2019t a timing problem \u2014 it\u2019s a business spending more than it earns. A good payer doesn\u2019t fix a sinking ship."
+    },
+    {
+      "id": "transition",
+      "business_id": "biz_006",
+      "label": "The transition",
+      "tagline": "When reliable becomes risky \u2014 two cycles",
+      "primary_payer_id": "pyr_009",
+      "recommendation": {
+        "amount": 16500,
+        "gap_breakdown": { "obligation": 25000, "balance": 12000, "buffer": 3500, "shortfall": 13000 },
+        "decision": "advance",
+        "confidence": "medium",
+        "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of \u20ac16,500 covers your payroll and supplier payments plus your typical \u20ac3,500 buffer. Their recent trend is a concern we\u2019re watching.",
+        "risk_factors": ["Nordic Events\u2019 last 3 payments trending later: 32 \u2192 36 \u2192 41 days"]
+      },
+      "warning": "We\u2019ve noticed Nordic Events has been paying later recently. Their last 3 invoices took 32, 36, and 41 days \u2014 up from their usual 25\u201328. We\u2019re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
+      "resolution": { "day": 27, "message": "Nordic Events paid invoice #INV-2024-156. \u20ac16,500 bridge auto-resolved." },
+      "second_cycle": {
+        "obligation_day": 38,
+        "decline_reason": "We bridged your Nordic Events invoice last cycle and it worked out. But their payment timing has continued to slide \u2014 their last 3 payments took 32, 36, and 41 days. Given this trajectory, we can\u2019t confidently recommend a bridge this cycle. You can cover this gap through your overdraft facility, or reach out to Nordic Events about their payment schedule."
+      },
+      "decline_reason": null
     }
   ],
 
@@ -124,6 +154,19 @@
       "balance_trend": "declining",
       "overdraft_usage_trend": "increasing",
       "scenario": "gotcha_solvency_not_liquidity"
+    },
+    {
+      "business_id": "biz_006",
+      "name": "Fika & Co",
+      "industry": "Catering",
+      "overdraft_limit": 50000,
+      "current_balance": 12000,
+      "typical_buffer": 3500,
+      "monthly_revenue_avg": 55000,
+      "months_on_pleo": 16,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "transition"
     }
   ],
 
@@ -189,10 +232,10 @@
       "obligation_id": "obl_007",
       "business_id": "biz_004",
       "type": "payroll",
-      "amount": 52000,
+      "amount": 42000,
       "due_in_days": 8,
       "recurring": true,
-      "description": "Monthly payroll - 15 employees"
+      "description": "Monthly payroll - 12 employees"
     },
     {
       "obligation_id": "obl_008",
@@ -230,6 +273,34 @@
       "due_in_days": 18,
       "recurring": false,
       "description": "New espresso machine lease payment"
+    },
+
+    {
+      "obligation_id": "obl_012",
+      "business_id": "biz_006",
+      "type": "payroll",
+      "amount": 20000,
+      "due_in_days": 8,
+      "recurring": true,
+      "description": "Monthly payroll - 6 employees"
+    },
+    {
+      "obligation_id": "obl_013",
+      "business_id": "biz_006",
+      "type": "vendor",
+      "amount": 5000,
+      "due_in_days": 12,
+      "recurring": true,
+      "description": "Monthly food supplier delivery"
+    },
+    {
+      "obligation_id": "obl_014",
+      "business_id": "biz_006",
+      "type": "payroll",
+      "amount": 20000,
+      "due_in_days": 38,
+      "recurring": true,
+      "description": "Monthly payroll - 6 employees (cycle 2)"
     }
   ],
 
@@ -309,6 +380,15 @@
       "invoice_amount": 12000,
       "due_in_days": 40,
       "description": "Office supply contract - StartupHub"
+    },
+
+    {
+      "receivable_id": "rec_010",
+      "business_id": "biz_006",
+      "payer_id": "pyr_009",
+      "invoice_amount": 28000,
+      "due_in_days": 28,
+      "description": "March corporate events catering - Nordic Events"
     }
   ],
 
@@ -439,6 +519,23 @@
       ],
       "trend": "deteriorating",
       "first_invoice_months_ago": 8
+    },
+    {
+      "payer_id": "pyr_009",
+      "payer_name": "Nordic Events",
+      "total_invoices": 10,
+      "paid_on_time": 7,
+      "avg_days_to_pay": 30,
+      "avg_days_late_when_late": 10,
+      "last_5_payments": [
+        { "days_to_pay": 25, "on_time": true },
+        { "days_to_pay": 28, "on_time": true },
+        { "days_to_pay": 32, "on_time": false },
+        { "days_to_pay": 36, "on_time": false },
+        { "days_to_pay": 41, "on_time": false }
+      ],
+      "trend": "deteriorating",
+      "first_invoice_months_ago": 18
     }
   ]
 }
