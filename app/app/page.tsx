@@ -300,7 +300,7 @@ export default function PleoBridgeDemo() {
     setComplianceResult(null);
     const recText = [
       `AI-generated recommendation - Invoice Bridge`,
-      `Your payment from ${scenario.receivables[0].payer} isn't due for ${scenario.receivables[0].dueDay} days, but you have ${scenario.obligations[0].type} in ${scenario.obligations[0].dueDay} days. We can bridge ${eur(scenario.recommendation.amount)} to cover the gap and keep your usual buffer.`,
+      `Your payment from ${scenario.receivables[0].payer} isn't due for ${scenario.receivables[0].dueDay - currentDay} days, but you have ${scenario.obligations[0].type} in ${scenario.obligations[0].dueDay - currentDay} days. We can bridge ${eur(scenario.recommendation.amount)} to cover the gap and keep your usual buffer.`,
       `How we assessed this:`,
       `- Payer reliability: ${scenario.payer.paidOnTime}/${scenario.payer.totalInvoices} on time (${((scenario.payer.onTimeRate || 0) * 100).toFixed(0)}%)`,
       `- Average days to pay: ${scenario.payer.avgDaysToPay} days, trend: ${scenario.payer.trend}`,
@@ -485,7 +485,7 @@ export default function PleoBridgeDemo() {
 
               <div style={{ padding: "24px 28px" }}>
                 <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}>
-                  Your payment from <span style={{ color: "#0f8a5f" }}>{scenario.receivables[0].payer}</span> isn&apos;t due for {scenario.receivables[0].dueDay} days, but you have {scenario.obligations[0].type} in <span style={{ color: "#d94f4f" }}>{scenario.obligations[0].dueDay} days</span>.
+                  Your payment from <span style={{ color: "#0f8a5f" }}>{scenario.receivables[0].payer}</span> isn&apos;t due for {scenario.receivables[0].dueDay - currentDay} days, but you have {scenario.obligations[0].type} in <span style={{ color: "#d94f4f" }}>{scenario.obligations[0].dueDay - currentDay} days</span>.
                   {" "}We can bridge <strong>{eur(scenario.recommendation.amount)}</strong> to cover the gap and keep your usual buffer.
                 </div>
 
