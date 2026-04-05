@@ -60,7 +60,7 @@
         "risk_factors": ["Nordic Events\u2019 last 3 payments trending later: 32 \u2192 36 \u2192 41 days"]
       },
       "warning": "We\u2019ve noticed Nordic Events has been paying later recently. Their last 3 invoices took 32, 36, and 41 days \u2014 up from their usual 25\u201328. We\u2019re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
-      "resolution": { "day": 28, "message": "Nordic Events paid invoice #INV-2024-156. \u20ac16,500 bridge auto-resolved." },
+      "resolution": { "day": 33, "message": "Nordic Events paid invoice #INV-2024-156. \u20ac16,500 bridge auto-resolved." },
       "second_cycle": {
         "obligation_day": 38,
         "decline_reason": "We bridged your Nordic Events invoice last cycle and it worked out. But their payment timing has continued to slide \u2014 their last 3 payments took 32, 36, and 41 days. Given this trajectory, we can\u2019t confidently recommend a bridge this cycle. You can cover this gap through your overdraft facility, or reach out to Nordic Events about their payment schedule."
@@ -268,7 +268,7 @@
       "business_id": "biz_006",
       "payer_id": "pyr_009",
       "invoice_amount": 28000,
-      "due_in_days": 28,
+      "due_in_days": 33,
       "description": "March corporate events catering - Nordic Events"
     }
   ],
