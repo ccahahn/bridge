@@ -28,16 +28,6 @@
       "decline_reason": "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but \u20ac22,000 doesn\u2019t cover the \u20ac56,000 gap. No safe bridge available."
     },
     {
-      "id": "decline",
-      "business_id": "biz_003",
-      "label": "Correctly declines",
-      "tagline": "New client, no payment history",
-      "primary_payer_id": "pyr_005",
-      "recommendation": null,
-      "resolution": null,
-      "decline_reason": "NewSchool Academy is a new client with zero payment history. The system never bridges against unknown payers. Start small."
-    },
-    {
       "id": "deteriorating",
       "business_id": "biz_004",
       "label": "Bridge with caution",
@@ -54,16 +44,6 @@
       "warning": "We\u2019ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days \u2014 up from their usual average of 30. We\u2019re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with TrustBank or setting up your overdraft as a backup.",
       "resolution": { "day": 31, "message": "TrustBank paid invoice #INV-2024-092. \u20ac44,000 bridge auto-resolved." },
       "decline_reason": null
-    },
-    {
-      "id": "solvency",
-      "business_id": "biz_005",
-      "label": "Not a timing problem",
-      "tagline": "Good payer, sinking business",
-      "primary_payer_id": "pyr_007",
-      "recommendation": null,
-      "resolution": null,
-      "decline_reason": "HotelGroup Nordic is a reliable payer (10 of 11 on time). But Kova Roasters\u2019 balance is declining and overdraft usage is increasing. Obligations (\u20ac51,000) outpace receivables (\u20ac47,000). This isn\u2019t a timing problem \u2014 it\u2019s a business spending more than it earns. A good payer doesn\u2019t fix a sinking ship."
     },
     {
       "id": "transition",
@@ -117,19 +97,6 @@
       "scenario": "bridge_risky"
     },
     {
-      "business_id": "biz_003",
-      "name": "Luma Interiors",
-      "industry": "Interior Design",
-      "overdraft_limit": 50000,
-            "current_balance": 6000,
-      "typical_buffer": 3000,
-      "monthly_revenue_avg": 45000,
-      "months_on_pleo": 8,
-      "balance_trend": "declining",
-      "overdraft_usage_trend": "increasing",
-      "scenario": "correctly_declines"
-    },
-    {
       "business_id": "biz_004",
       "name": "Vero Analytics",
       "industry": "Data Consulting",
@@ -141,19 +108,6 @@
       "balance_trend": "stable",
       "overdraft_usage_trend": "stable",
       "scenario": "gotcha_deteriorating_payer"
-    },
-    {
-      "business_id": "biz_005",
-      "name": "Kova Roasters",
-      "industry": "Food & Beverage",
-      "overdraft_limit": 50000,
-            "current_balance": 15000,
-      "typical_buffer": 4000,
-      "monthly_revenue_avg": 90000,
-      "months_on_pleo": 12,
-      "balance_trend": "declining",
-      "overdraft_usage_trend": "increasing",
-      "scenario": "gotcha_solvency_not_liquidity"
     },
     {
       "business_id": "biz_006",
@@ -210,25 +164,6 @@
     },
 
     {
-      "obligation_id": "obl_005",
-      "business_id": "biz_003",
-      "type": "payroll",
-      "amount": 18000,
-      "due_in_days": 10,
-      "recurring": true,
-      "description": "Monthly payroll - 5 employees"
-    },
-    {
-      "obligation_id": "obl_006",
-      "business_id": "biz_003",
-      "type": "rent",
-      "amount": 2800,
-      "due_in_days": 14,
-      "recurring": true,
-      "description": "Office lease"
-    },
-
-    {
       "obligation_id": "obl_007",
       "business_id": "biz_004",
       "type": "payroll",
@@ -245,34 +180,6 @@
       "due_in_days": 20,
       "recurring": false,
       "description": "Quarterly VAT payment"
-    },
-
-    {
-      "obligation_id": "obl_009",
-      "business_id": "biz_005",
-      "type": "payroll",
-      "amount": 28000,
-      "due_in_days": 12,
-      "recurring": true,
-      "description": "Monthly payroll - 8 employees"
-    },
-    {
-      "obligation_id": "obl_010",
-      "business_id": "biz_005",
-      "type": "vendor",
-      "amount": 15000,
-      "due_in_days": 5,
-      "recurring": true,
-      "description": "Green bean supplier - monthly delivery"
-    },
-    {
-      "obligation_id": "obl_011",
-      "business_id": "biz_005",
-      "type": "vendor",
-      "amount": 8000,
-      "due_in_days": 18,
-      "recurring": false,
-      "description": "New espresso machine lease payment"
     },
 
     {
@@ -340,15 +247,6 @@
     },
 
     {
-      "receivable_id": "rec_005",
-      "business_id": "biz_003",
-      "payer_id": "pyr_005",
-      "invoice_amount": 20000,
-      "due_in_days": 35,
-      "description": "Spring tutoring program - NewSchool Academy"
-    },
-
-    {
       "receivable_id": "rec_006",
       "business_id": "biz_004",
       "payer_id": "pyr_006",
@@ -363,23 +261,6 @@
       "invoice_amount": 30000,
       "due_in_days": 50,
       "description": "Analytics dashboard phase 2 - TrustBank"
-    },
-
-    {
-      "receivable_id": "rec_008",
-      "business_id": "biz_005",
-      "payer_id": "pyr_007",
-      "invoice_amount": 35000,
-      "due_in_days": 28,
-      "description": "Monthly wholesale order - HotelGroup Nordic"
-    },
-    {
-      "receivable_id": "rec_009",
-      "business_id": "biz_005",
-      "payer_id": "pyr_008",
-      "invoice_amount": 12000,
-      "due_in_days": 40,
-      "description": "Office supply contract - StartupHub"
     },
 
     {
@@ -460,17 +341,6 @@
       "first_invoice_months_ago": 16
     },
     {
-      "payer_id": "pyr_005",
-      "payer_name": "NewSchool Academy",
-      "total_invoices": 0,
-      "paid_on_time": 0,
-      "avg_days_to_pay": null,
-      "avg_days_late_when_late": null,
-      "last_5_payments": [],
-      "trend": "unknown",
-      "first_invoice_months_ago": 0
-    },
-    {
       "payer_id": "pyr_006",
       "payer_name": "TrustBank",
       "total_invoices": 15,
@@ -486,39 +356,6 @@
       ],
       "trend": "deteriorating",
       "first_invoice_months_ago": 30
-    },
-    {
-      "payer_id": "pyr_007",
-      "payer_name": "HotelGroup Nordic",
-      "total_invoices": 11,
-      "paid_on_time": 10,
-      "avg_days_to_pay": 25,
-      "avg_days_late_when_late": 4,
-      "last_5_payments": [
-        { "days_to_pay": 24, "on_time": true },
-        { "days_to_pay": 26, "on_time": true },
-        { "days_to_pay": 23, "on_time": true },
-        { "days_to_pay": 25, "on_time": true },
-        { "days_to_pay": 29, "on_time": false }
-      ],
-      "trend": "stable",
-      "first_invoice_months_ago": 22
-    },
-    {
-      "payer_id": "pyr_008",
-      "payer_name": "StartupHub",
-      "total_invoices": 4,
-      "paid_on_time": 2,
-      "avg_days_to_pay": 38,
-      "avg_days_late_when_late": 12,
-      "last_5_payments": [
-        { "days_to_pay": 30, "on_time": true },
-        { "days_to_pay": 42, "on_time": false },
-        { "days_to_pay": 35, "on_time": false },
-        { "days_to_pay": 45, "on_time": false }
-      ],
-      "trend": "deteriorating",
-      "first_invoice_months_ago": 8
     },
     {
       "payer_id": "pyr_009",
