@@ -212,7 +212,7 @@ function CashFlowChart({ scenario, currentDay, approved }: { scenario: Scenario;
       {dayLabels.map((d) => (<text key={d} x={x(d)} y={height - 6} textAnchor="middle" fill="#8c8c9a" fontSize="10" fontFamily="'DM Sans', sans-serif">T+{d}</text>))}
 
       <line x1={pad.l} y1={bufferY} x2={width - pad.r} y2={bufferY} stroke="#e0b040" strokeWidth="1" strokeDasharray="6,4" opacity="0.6" />
-      <text x={width - pad.r + 2} y={bufferY - 4} fill="#c49a20" fontSize="9" fontFamily="'DM Sans', sans-serif">buffer</text>
+      <text x={width - pad.r - 4} y={bufferY - 6} textAnchor="end" fill="#c49a20" fontSize="9" fontFamily="'DM Sans', sans-serif">buffer</text>
 
       {minBal < 0 && <line x1={pad.l} y1={y(0)} x2={width - pad.r} y2={y(0)} stroke="#d94f4f" strokeWidth="1" strokeDasharray="4,4" opacity="0.4" />}
 
