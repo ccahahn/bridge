@@ -383,7 +383,7 @@ export default function PleoBridgeDemo() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button onClick={reset} style={{ padding: "9px 18px", background: "#f6f6f8", border: "1px solid #e0e0e6", borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", color: "#1a1a2e" }}>Reset</button>
-            <button onClick={() => setPlaying(!playing)} style={{
+            <button onClick={() => { if (currentDay >= NUM_DAYS) { reset(); setPlaying(true); } else { setPlaying(!playing); } }} style={{
               padding: "10px 28px", background: playing ? "#1a1a2e" : "#4a40d4", color: "#fff",
               border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s",
               boxShadow: playing ? "none" : "0 2px 8px rgba(74, 64, 212, 0.3)",
