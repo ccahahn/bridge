@@ -259,7 +259,7 @@
       "business_id": "biz_004",
       "payer_id": "pyr_006",
       "invoice_amount": 30000,
-      "due_in_days": 50,
+      "due_in_days": 42,
       "description": "Analytics dashboard phase 2 - TrustBank"
     },
 
