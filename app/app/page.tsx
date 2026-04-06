@@ -151,7 +151,7 @@ function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS, approvedSecon
   const bridge2Day = sc2?.recommendation && approvedSecond ? sc2.gapDetectionDay + 1 : null;
   const resolve2Day = sc2?.resolution?.day || null;
   const secondRec = scenario.receivables.find((r) => r.payer === scenario.payer.name && r.id !== primaryRec?.id);
-  const isLate2 = approvedSecond && secondRec && resolve2Day && resolve2Day > secondRec.dueDay;
+  const isLate2 = secondRec && resolve2Day && resolve2Day > secondRec.dueDay;
 
   for (let d = 0; d <= numDays; d++) {
     let dayBal = bal;
@@ -486,7 +486,7 @@ export default function PleoBridgeDemo() {
                             T+{item.dueDay} days {isOverdue ? "\u00B7 overdue" : isPast ? "\u00B7 done" : ""}
                           </div>
                         </div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: item.kind === "out" ? "#d94f4f" : isOverdue ? "#c49a20" : "#0f8a5f" }}>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: item.kind === "out" ? "#d94f4f" : isOverdue ? "#c49a20" : "#0f8a5f", whiteSpace: "nowrap" }}>
                           {item.kind === "out" ? "-" : "+"}{gbp(item.amount)}
                         </div>
                       </div>
