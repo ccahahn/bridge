@@ -447,14 +447,6 @@ export default function PleoBridgeDemo() {
                   );
                 });
               })()}
-              {approved && scenario.recommendation && (
-                <div style={{ padding: "12px 0", borderBottom: "1px solid #f0f0f4" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div><div style={{ fontSize: 13, fontWeight: 500, color: "#0f8a5f" }}>{"\u26A1"} Bridge advance</div><div style={{ fontSize: 11, color: "#8c8c9a", marginTop: 2 }}>Active {"\u00B7"} auto-resolves on payment</div></div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#0f8a5f" }}>+{eur(scenario.recommendation.amount)}</div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
