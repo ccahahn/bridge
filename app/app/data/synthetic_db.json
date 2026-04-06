@@ -8,13 +8,23 @@
       "primary_payer_id": "pyr_001",
       "recommendation": {
         "amount": 20500,
-        "gap_breakdown": { "obligation": 46500, "balance": 31000, "buffer": 5000, "shortfall": 15500 },
+        "gap_breakdown": {
+          "obligation": 46500,
+          "balance": 31000,
+          "buffer": 5000,
+          "shortfall": 15500
+        },
         "decision": "advance",
         "confidence": "high",
-        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of \u20ac20,500 covers your payroll and rent plus your typical \u20ac5,000 buffer. We bridge the timing, not the invoice.",
-        "risk_factors": ["One late payment in last 12 invoices (35 days vs 30-day term)"]
+        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of €20,500 covers your payroll and rent plus your typical €5,000 buffer. We bridge the timing, not the invoice.",
+        "risk_factors": [
+          "One late payment in last 12 invoices (35 days vs 30-day term)"
+        ]
       },
-      "resolution": { "day": 35, "message": "Acme Corp paid invoice #INV-2024-038. \u20ac20,500 bridge auto-resolved." },
+      "resolution": {
+        "day": 35,
+        "message": "Acme Corp paid invoice #INV-2024-038. €20,500 bridge auto-resolved."
+      },
       "decline_reason": null
     },
     {
@@ -25,7 +35,7 @@
       "primary_payer_id": "pyr_003",
       "recommendation": null,
       "resolution": null,
-      "decline_reason": "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but \u20ac22,000 doesn\u2019t cover the \u20ac56,000 gap. No safe bridge available."
+      "decline_reason": "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but €22,000 doesn’t cover the €56,000 gap. No safe bridge available."
     },
     {
       "id": "deteriorating",
@@ -35,14 +45,24 @@
       "primary_payer_id": "pyr_006",
       "recommendation": {
         "amount": 44000,
-        "gap_breakdown": { "obligation": 56000, "balance": 18000, "buffer": 6000, "shortfall": 38000 },
+        "gap_breakdown": {
+          "obligation": 56000,
+          "balance": 18000,
+          "buffer": 6000,
+          "shortfall": 38000
+        },
         "decision": "advance",
         "confidence": "medium",
-        "rationale": "TrustBank has paid 13 of 15 invoices on time (87%) with an average of 30 days. The bridge of \u20ac44,000 covers your payroll and VAT payments plus your typical \u20ac6,000 buffer. Their recent payments have been slowing, which we\u2019re watching.",
-        "risk_factors": ["TrustBank\u2019s last 4 payments trending later: 35 \u2192 38 \u2192 42 \u2192 45 days"]
+        "rationale": "TrustBank has paid 13 of 15 invoices on time (87%) with an average of 30 days. The bridge of €44,000 covers your payroll and VAT payments plus your typical €6,000 buffer. Their recent payments have been slowing, which we’re watching.",
+        "risk_factors": [
+          "TrustBank’s last 4 payments trending later: 35 → 38 → 42 → 45 days"
+        ]
       },
-      "warning": "We\u2019ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days \u2014 up from their usual average of 30. We\u2019re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with TrustBank or setting up your overdraft as a backup.",
-      "resolution": { "day": 32, "message": "TrustBank paid invoice #INV-2024-092. \u20ac44,000 bridge auto-resolved." },
+      "warning": "We’ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days — up from their usual average of 30. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with TrustBank or setting up your overdraft as a backup.",
+      "resolution": {
+        "day": 32,
+        "message": "TrustBank paid invoice #INV-2024-092. €44,000 bridge auto-resolved."
+      },
       "decline_reason": null
     },
     {
@@ -53,29 +73,44 @@
       "primary_payer_id": "pyr_009",
       "recommendation": {
         "amount": 16500,
-        "gap_breakdown": { "obligation": 25000, "balance": 12000, "buffer": 3500, "shortfall": 13000 },
+        "gap_breakdown": {
+          "obligation": 25000,
+          "balance": 12000,
+          "buffer": 3500,
+          "shortfall": 13000
+        },
         "decision": "advance",
         "confidence": "medium",
-        "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of \u20ac16,500 covers your payroll and supplier payments plus your typical \u20ac3,500 buffer. Their recent trend is a concern we\u2019re watching.",
-        "risk_factors": ["Nordic Events\u2019 last 3 payments trending later: 32 \u2192 36 \u2192 41 days"]
+        "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of €16,500 covers your payroll and supplier payments plus your typical €3,500 buffer. Their recent trend is a concern we’re watching.",
+        "risk_factors": [
+          "Nordic Events’ last 3 payments trending later: 32 → 36 → 41 days"
+        ]
       },
-      "warning": "We\u2019ve noticed Nordic Events has been paying later recently. Their last 3 invoices took 32, 36, and 41 days \u2014 up from their usual 25\u201328. We\u2019re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
-      "resolution": { "day": 33, "message": "Nordic Events paid invoice #INV-2024-156. \u20ac16,500 bridge auto-resolved." },
+      "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices took 32, 36, and 41 days — up from their usual 25–28. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
+      "resolution": {
+        "day": 18,
+        "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. €16,500 bridge auto-resolved."
+      },
       "second_cycle": {
+        "gap_detection_day": 28,
         "obligation_day": 38,
-        "decline_reason": "We bridged your Nordic Events invoice last cycle and it worked out. But their payment timing has continued to slide \u2014 their last 3 payments took 32, 36, and 41 days. Given this trajectory, we can\u2019t confidently recommend a bridge this cycle. You can cover this gap through your overdraft facility, or reach out to Nordic Events about their payment schedule."
+        "receivable_id": "rec_011",
+        "decline_reason": "You have a €25,000 receivable from Nordic Events due in 2 days, but we can’t confidently bridge against it. Last cycle, Nordic paid 8 days late — their worst yet. Three of their last four payments have been significantly late (2 → 6 → 11 → 8 days). Your overdraft facility can cover the €8,500 shortfall until Nordic pays."
       },
-      "decline_reason": null
+      "decline_reason": null,
+      "post_resolution_notice": {
+        "day": 18,
+        "message": "Your bridge resolved, but Nordic Events paid 8 days past their due date — their worst yet. Their recent pattern: 2, 6, 11, and now 8 days late. Given this trajectory, we likely can’t recommend a bridge next cycle. Consider setting up your overdraft as a backup or following up with Nordic Events about their payment schedule."
+      }
     }
   ],
-
   "businesses": [
     {
       "business_id": "biz_001",
       "name": "Verdant Studio",
       "industry": "Design Agency",
       "overdraft_limit": 50000,
-            "current_balance": 31000,
+      "current_balance": 31000,
       "typical_buffer": 5000,
       "monthly_revenue_avg": 120000,
       "months_on_pleo": 18,
@@ -88,7 +123,7 @@
       "name": "Norde Health",
       "industry": "Health Tech",
       "overdraft_limit": 50000,
-            "current_balance": 22000,
+      "current_balance": 22000,
       "typical_buffer": 8000,
       "monthly_revenue_avg": 200000,
       "months_on_pleo": 14,
@@ -101,7 +136,7 @@
       "name": "Vero Analytics",
       "industry": "Data Consulting",
       "overdraft_limit": 50000,
-            "current_balance": 18000,
+      "current_balance": 18000,
       "typical_buffer": 6000,
       "monthly_revenue_avg": 150000,
       "months_on_pleo": 22,
@@ -123,7 +158,6 @@
       "scenario": "transition"
     }
   ],
-
   "obligations": [
     {
       "obligation_id": "obl_001",
@@ -143,7 +177,6 @@
       "recurring": true,
       "description": "Studio lease"
     },
-
     {
       "obligation_id": "obl_003",
       "business_id": "biz_002",
@@ -162,7 +195,6 @@
       "recurring": false,
       "description": "Fleet maintenance invoice"
     },
-
     {
       "obligation_id": "obl_007",
       "business_id": "biz_004",
@@ -181,7 +213,6 @@
       "recurring": false,
       "description": "Quarterly VAT payment"
     },
-
     {
       "obligation_id": "obl_012",
       "business_id": "biz_006",
@@ -210,7 +241,6 @@
       "description": "Monthly payroll - 6 employees (cycle 2)"
     }
   ],
-
   "receivables": [
     {
       "receivable_id": "rec_001",
@@ -228,7 +258,6 @@
       "due_in_days": 40,
       "description": "Logo refresh - Bloom Bakery"
     },
-
     {
       "receivable_id": "rec_003",
       "business_id": "biz_002",
@@ -245,7 +274,6 @@
       "due_in_days": 25,
       "description": "Express delivery batch - QuickMart"
     },
-
     {
       "receivable_id": "rec_006",
       "business_id": "biz_004",
@@ -262,13 +290,12 @@
       "due_in_days": 42,
       "description": "Analytics dashboard phase 2 - TrustBank"
     },
-
     {
       "receivable_id": "rec_010",
       "business_id": "biz_006",
       "payer_id": "pyr_009",
       "invoice_amount": 28000,
-      "due_in_days": 33,
+      "due_in_days": 10,
       "description": "March corporate events catering - Nordic Events"
     },
     {
@@ -276,11 +303,10 @@
       "business_id": "biz_006",
       "payer_id": "pyr_009",
       "invoice_amount": 25000,
-      "due_in_days": 50,
+      "due_in_days": 30,
       "description": "April corporate events catering - Nordic Events"
     }
   ],
-
   "payers": [
     {
       "payer_id": "pyr_001",
@@ -290,11 +316,26 @@
       "avg_days_to_pay": 28,
       "avg_days_late_when_late": 5,
       "last_5_payments": [
-        { "days_to_pay": 27, "on_time": true },
-        { "days_to_pay": 26, "on_time": true },
-        { "days_to_pay": 30, "on_time": true },
-        { "days_to_pay": 28, "on_time": true },
-        { "days_to_pay": 25, "on_time": true }
+        {
+          "days_to_pay": 27,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 26,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 30,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 28,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 25,
+          "on_time": true
+        }
       ],
       "trend": "stable",
       "first_invoice_months_ago": 24
@@ -307,9 +348,18 @@
       "avg_days_to_pay": 22,
       "avg_days_late_when_late": 0,
       "last_5_payments": [
-        { "days_to_pay": 20, "on_time": true },
-        { "days_to_pay": 24, "on_time": true },
-        { "days_to_pay": 22, "on_time": true }
+        {
+          "days_to_pay": 20,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 24,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 22,
+          "on_time": true
+        }
       ],
       "trend": "stable",
       "first_invoice_months_ago": 5
@@ -322,11 +372,26 @@
       "avg_days_to_pay": 42,
       "avg_days_late_when_late": 18,
       "last_5_payments": [
-        { "days_to_pay": 38, "on_time": false },
-        { "days_to_pay": 45, "on_time": false },
-        { "days_to_pay": 30, "on_time": true },
-        { "days_to_pay": 50, "on_time": false },
-        { "days_to_pay": 48, "on_time": false }
+        {
+          "days_to_pay": 38,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 45,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 30,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 50,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 48,
+          "on_time": false
+        }
       ],
       "trend": "deteriorating",
       "first_invoice_months_ago": 20
@@ -339,11 +404,26 @@
       "avg_days_to_pay": 18,
       "avg_days_late_when_late": 3,
       "last_5_payments": [
-        { "days_to_pay": 17, "on_time": true },
-        { "days_to_pay": 19, "on_time": true },
-        { "days_to_pay": 16, "on_time": true },
-        { "days_to_pay": 22, "on_time": false },
-        { "days_to_pay": 18, "on_time": true }
+        {
+          "days_to_pay": 17,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 19,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 16,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 22,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 18,
+          "on_time": true
+        }
       ],
       "trend": "stable",
       "first_invoice_months_ago": 16
@@ -356,11 +436,26 @@
       "avg_days_to_pay": 30,
       "avg_days_late_when_late": 8,
       "last_5_payments": [
-        { "days_to_pay": 30, "on_time": true },
-        { "days_to_pay": 35, "on_time": false },
-        { "days_to_pay": 38, "on_time": false },
-        { "days_to_pay": 42, "on_time": false },
-        { "days_to_pay": 45, "on_time": false }
+        {
+          "days_to_pay": 30,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 35,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 38,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 42,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 45,
+          "on_time": false
+        }
       ],
       "trend": "deteriorating",
       "first_invoice_months_ago": 30
@@ -373,14 +468,30 @@
       "avg_days_to_pay": 30,
       "avg_days_late_when_late": 10,
       "last_5_payments": [
-        { "days_to_pay": 25, "on_time": true },
-        { "days_to_pay": 28, "on_time": true },
-        { "days_to_pay": 32, "on_time": false },
-        { "days_to_pay": 36, "on_time": false },
-        { "days_to_pay": 41, "on_time": false }
+        {
+          "days_to_pay": 25,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 28,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 32,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 36,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 41,
+          "on_time": false
+        }
       ],
       "trend": "deteriorating",
-      "first_invoice_months_ago": 18
+      "first_invoice_months_ago": 18,
+      "payment_terms_days": 30
     }
   ]
 }
