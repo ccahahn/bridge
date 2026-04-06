@@ -389,25 +389,56 @@ export default function PleoBridgeDemo() {
             {/* Timeline */}
             <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Upcoming</div>
-              {[
-                ...scenario.obligations.map((o) => ({ ...o, kind: "out" as const, label: o.label })),
-                ...scenario.receivables.map((r) => ({ ...r, kind: "in" as const, label: `${r.payer} payment`, dueDay: r.dueDay, amount: r.amount, id: r.id })),
-              ].sort((a, b) => a.dueDay - b.dueDay).map((item, i) => {
-                const isPast = currentDay >= item.dueDay;
-                return (
-                  <div key={i} style={{ padding: "12px 0", borderBottom: "1px solid #f0f0f4", opacity: isPast ? 0.4 : 1, transition: "opacity 0.3s" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 500, textDecoration: isPast ? "line-through" : "none" }}>{item.label}</div>
-                        <div style={{ fontSize: 11, color: "#8c8c9a", marginTop: 2 }}>T+{item.dueDay} days {isPast ? "\u00B7 done" : ""}</div>
-                      </div>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: item.kind === "out" ? "#d94f4f" : "#0f8a5f" }}>
-                        {item.kind === "out" ? "-" : "+"}{eur(item.amount)}
+              {(() => {
+                const primaryRec = scenario.receivables.find((r) => r.payer === scenario.payer.name);
+                const paidDay = scenario.resolution?.day;
+                const isLate = primaryRec && paidDay && paidDay > primaryRec.dueDay;
+                const daysLate = isLate ? paidDay - primaryRec.dueDay : 0;
+
+                type TimelineItem = { id: string; kind: "out" | "in"; label: string; dueDay: number; amount: number; late?: "due" | "paid" };
+
+                const items: TimelineItem[] = [
+                  ...scenario.obligations.map((o) => ({ id: o.id, kind: "out" as const, label: o.label, dueDay: o.dueDay, amount: o.amount })),
+                  ...scenario.receivables.map((r) => ({
+                    id: r.id, kind: "in" as const, dueDay: r.dueDay, amount: r.amount,
+                    label: isLate && r.id === primaryRec.id ? `${r.payer} due` : `${r.payer} payment`,
+                    late: isLate && r.id === primaryRec.id ? "due" as const : undefined,
+                  })),
+                  ...(isLate && primaryRec ? [{
+                    id: `${primaryRec.id}-paid`, kind: "in" as const, dueDay: paidDay,
+                    amount: primaryRec.amount, label: `${primaryRec.payer} paid \u2014 ${daysLate} days late`, late: "paid" as const,
+                  }] : []),
+                ];
+
+                return items.sort((a, b) => a.dueDay - b.dueDay).map((item, i) => {
+                  const isPast = currentDay >= item.dueDay;
+                  const isOverdue = item.late === "due" && currentDay >= item.dueDay && (!paidDay || currentDay < paidDay);
+                  const overdueResolved = item.late === "due" && paidDay && currentDay >= paidDay;
+
+                  return (
+                    <div key={i} style={{
+                      padding: "12px 0", borderBottom: "1px solid #f0f0f4",
+                      opacity: (isPast && !isOverdue) ? 0.4 : 1, transition: "opacity 0.3s",
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div>
+                          <div style={{
+                            fontSize: 13, fontWeight: 500,
+                            textDecoration: (isPast && !isOverdue) || overdueResolved ? "line-through" : "none",
+                            color: isOverdue ? "#c49a20" : undefined,
+                          }}>{item.label}</div>
+                          <div style={{ fontSize: 11, color: isOverdue ? "#c49a20" : "#8c8c9a", marginTop: 2 }}>
+                            T+{item.dueDay} days {isOverdue ? "\u00B7 overdue" : isPast ? "\u00B7 done" : ""}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: item.kind === "out" ? "#d94f4f" : isOverdue ? "#c49a20" : "#0f8a5f" }}>
+                          {item.kind === "out" ? "-" : "+"}{eur(item.amount)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                });
+              })()}
               {approved && scenario.recommendation && (
                 <div style={{ padding: "12px 0", borderBottom: "1px solid #f0f0f4" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
