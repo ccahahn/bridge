@@ -5,7 +5,7 @@
 │                React Demo (Next.js)              │
 │                                                  │
 │  Synthetic Data ──► Rule Engine ──► Notification │
-│  (4 SMBs)          (arithmetic)     (pre-built)  │
+│  (3 SMBs)          (arithmetic)     (pre-built)  │
 │                                                  │
 │  Time Scrubber ──► Cash Flow Chart               │
 │  (slider/autoplay)  (SVG, animated)              │
@@ -32,11 +32,12 @@ The credit logic runs entirely client-side with predetermined outcomes baked int
 2. On-time rate below 60% → decline
 3. Trend deteriorating (last 3+ payments late) → decline
 4. Otherwise → advance, with early warning if trend is concerning
+5. For predicted gaps (payer due before obligation but likely to pay late): bridge proactively based on trend data
 
 Both are if/else logic. No model needed.
 
 **Constraints:**
-- Bridge amount cannot exceed the €50,000 overdraft limit
+- Bridge amount cannot exceed the £50,000 overdraft limit
 - Pleo expects repayment within 30 days — bridge window (activation to actual payment) must be ≤ 30 days. Pleo doesn't pull until the payer pays, not when the invoice is due
 - No interest on the bridge — the 2% activation fee for the overdraft facility is already paid
 
@@ -46,27 +47,26 @@ Both are if/else logic. No model needed.
 
 The React component imports `data/synthetic_db.json` at build time — single source of truth. All dates are relative (T+N days) so data never goes stale.
 
-**4 scenarios, 4 businesses, 6 payers.** Each scenario tests a different product behavior:
+**3 scenarios, 3 businesses, 4 payers.** Each scenario tests a different product behavior:
 
 | Scenario | Business | What it tests |
 |----------|----------|---------------|
 | healthy | Verdant Studio | Bridge works — reliable payer, clean resolve |
-| risky | Norde Health | System correctly declines — unreliable payer |
 | deteriorating | Vero Analytics | Bridge with early warning — good stats, concerning trend |
-| transition | Fika & Co | Two cycles — bridge + warning, then graceful decline |
+| transition | Fika & Co | Two cycles — bridge with warning, then proactive bridge against predicted late payment |
 
 ---
 
 ## Demo Mode
 
 The React demo supports:
-- **4 scenarios** selected from a sidebar dropdown with tagline visible at a glance
+- **3 scenarios** selected from a sidebar dropdown with tagline visible at a glance
 - **Auto-play** via a prominent "Play scenario" button — cash flow projection animates day by day
-- **Auto-pause** when notifications appear (bridge offer, decline, graceful decline) so the user can digest and act
+- **Auto-pause** when notifications appear (bridge offer, second bridge offer) so the user can digest and act
 - **Bridge notification** slides in when a gap forms — clean, minimal: situation statement, no-interest terms, approve/decline buttons
 - **Early warning** (amber card) appears within the bridge notification when payer trend is concerning
-- **Graceful decline** (second cycle) appears after a bridge resolves if the payer trend has worsened
-- **Cold decline** for scenarios where the system correctly says nothing (unreliable payer)
+- **Late payment tracking** in the timeline sidebar — receivables split into "due" and "paid — X days late" entries when a payer pays after their due date, with overdue state shown in amber
+- **Second bridge** (Fika only) — after Cycle 1 resolves with a late payment, the system offers a second bridge for the next cycle, this time against a predicted gap (payer due before payroll but likely to pay late)
 - **Resolution toast** when the bridge auto-resolves on payer payment
 - **Overdraft limit** updates live when bridge is active, restores when resolved
 - **Auto-resume** after user approves or declines the bridge offer

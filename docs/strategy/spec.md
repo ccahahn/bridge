@@ -14,7 +14,7 @@ This product is Pleo's own values made literal.
 
 **The Human Bar**
 
-The best version of this today is a sharp CFO at a 30-person company who keeps a rolling cash flow forecast in their head. They know: payroll hits on the 15th, the office lease is due on the 1st, and the €50K from their biggest client always lands around the 20th but sometimes it's the 28th. When they see a gap forming, they call their bank or move money between accounts before anyone on the team even notices a problem. They never panic. They never over-borrow. They solve the timing problem, not the solvency problem, because they know the difference.
+The best version of this today is a sharp CFO at a 30-person company who keeps a rolling cash flow forecast in their head. They know: payroll hits on the 15th, the office lease is due on the 1st, and the £50K from their biggest client always lands around the 20th but sometimes it's the 28th. When they see a gap forming, they call their bank or move money between accounts before anyone on the team even notices a problem. They never panic. They never over-borrow. They solve the timing problem, not the solvency problem, because they know the difference.
 
 What makes them great: they act before the gap becomes a crisis. They know which receivables are reliable and which aren't. They'd never borrow against an invoice from a client who hasn't paid them before. And they never leave borrowed money sitting around. The moment the cash comes in, the debt closes.
 
@@ -26,27 +26,36 @@ Design decisions this implies:
 
 **The Prototype**
 
-Four scenarios, each testing a different product behavior:
+Three scenarios, each testing a different product behavior:
 
-1. **The bridge works.** A healthy business has €50K coming from Acme Corp (reliable payer, 11 of 12 invoices paid on time) in T+35 days, but payroll of €42K and rent of €4.5K hit before that. The system bridges €20.5K — just enough to cover both obligations and maintain the buffer they're used to. Not the full €50K invoice. The system bridges the timing, not the invoice. The customer's capital stays free. Pleo has their back.
+1. **The bridge works.** Verdant Studio has £50K coming from Acme Corp (reliable payer, 11 of 12 invoices paid on time) at T+35, but payroll of £42K and rent of £4.5K hit before that. The system bridges £20.5K — just enough to cover both obligations and maintain the buffer they're used to. Not the full £50K invoice. The system bridges the timing, not the invoice. The customer's capital stays free. Pleo has their back.
 
-2. **The bridge is risky.** A business has a similar gap, but the receivable is from a client with a pattern of late payments — 50% on-time rate, deteriorating trend. The reliable payer's invoice doesn't cover the gap. No safe bridge available. The system stays silent. The option never surfaces.
+2. **Bridge with caution.** Vero Analytics has a reliable payer on paper — TrustBank at 87% lifetime on-time — but the last 4 payments have been getting later (35, 38, 42, 45 days vs their usual 30). The system still bridges £44K — the lifetime stats support it — but surfaces the trend: "We've noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days — up from their usual average of 30."
 
-3. **Bridge with caution.** A business has a reliable payer on paper (87% lifetime on-time), but the last 4 payments have been getting later. The system still bridges — the lifetime stats support it — but surfaces an early warning: "We may not recommend it next time." The user has time to follow up with the payer or set up their overdraft as a backup.
-
-4. **The transition.** A two-cycle story. Cycle 1: the system bridges with an early warning about a sliding payer. Cycle 2: the payer's trend has continued, and the system can't confidently bridge. Instead of silence, a graceful decline explains what changed and what the user can do. "We'd rather be honest now than let you find out at payroll."
+3. **The transition.** Fika & Co's two-cycle story with Nordic Events. Cycle 1: Nordic Events (7/10 on-time, trending late at 2→5→7 days) has a £20K receivable due at T+10 but payroll and supplier payments hit at T+8 and T+12. The system bridges £16.5K with an early warning about the trend. Nordic pays 8 days late at T+18. Bridge auto-resolves. Cycle 2: Nordic's next invoice (£25K) is due at T+35 — before payroll at T+38, so on paper there's no gap. But the system knows Nordic has been paying 2–8 days late. If that continues, the money won't land in time. The system bridges proactively against the predicted gap. Nordic pays late again at T+43. The system was right.
 
 What doors this closes:
 - The product never bridges against payers with no history. Out of scope for now; needs data before revisiting.
 - The user never keeps the advance after the receivable pays. Auto-pull is non-negotiable. Offering flexibility here may attract the wrong customer — someone using purpose-bound credit as general-purpose credit with extra steps — which is exactly the risk profile this product exists to avoid.
-- The product never replaces the overdraft. It layers on top. The overdraft limit (€50K) caps bridge amounts.
+- The product never replaces the overdraft. It layers on top. The overdraft limit (£50K) caps bridge amounts.
 - Pleo expects repayment within 30 days. The bridge window (activation to actual payment) must fit within this. Pleo doesn't pull until the payer pays — not when the invoice is due.
+
+**Balance Traces**
+
+Verdant Studio (with bridge):
+- T+0: £31,000 → T+7: +£20,500 bridge → T+9: -£42K payroll = £9,500 → T+15: -£4.5K rent = £5,000 (buffer) → T+35: +£50K Acme, -£20.5K repaid = £34,500
+
+Vero Analytics (with bridge):
+- T+0: £18,000 → T+6: +£44K bridge → T+8: -£42K payroll = £20,000 → T+20: -£14K VAT = £6,000 (buffer) → T+32: +£55K TrustBank pays, -£44K repaid = £17,000
+
+Fika & Co (with bridge, two cycles):
+- T+0: £12,000 → T+6: +£16.5K bridge → T+8: -£20K payroll = £8,500 → T+12: -£5K supplier = £3,500 (buffer) → T+18: +£20K Nordic pays (8 days late), -£16.5K repaid = £7,000 → T+36: +£16.5K bridge 2 → T+38: -£20K payroll = £3,500 (buffer) → T+43: +£25K Nordic pays (8 days late), -£16.5K repaid = £12,000
 
 **High-Level Architecture**
 
 One layer: a **rule engine** with no AI. The Cash Flow Monitor detects timing gaps and calculates bridge amounts. The Credit Assessor evaluates payer reliability, trend, and business health. Both are arithmetic and if/else logic — deterministic, instant, no tokens.
 
-The user sees a clean notification: "Your payment from Acme Corp isn't due for 28 days, but you have payroll in 2 days. We can bridge €20.500 to cover the gap and keep your usual buffer. No interest. Auto-resolves when Acme Corp pays."
+The user sees a clean notification: "Your payment from Acme Corp isn't due for 28 days, but you have payroll in 2 days. We can bridge £20,500 to cover the gap and keep your usual buffer. No interest. Auto-resolves when Acme Corp pays."
 
 For the prototype: the rule engine runs against a synthetic database with relative-time ledgers (not real dates, so the data never goes stale). Real-time monitoring is simulated — the prototype shows the moment, not the surveillance loop.
 
@@ -55,14 +64,14 @@ For the prototype: the rule engine runs against a synthetic database with relati
 Failure modes:
 
 *In the rule engine:*
-- The Credit Assessor misses a deteriorating trend hidden in a good lifetime average. The Vero Analytics scenario tests this — now with an early warning instead of a silent decline.
+- The Credit Assessor misses a deteriorating trend hidden in a good lifetime average. The Vero Analytics scenario tests this with an early warning surfacing the trend data.
 - The Monitor surfaces a recommendation when the gap might resolve on its own. The relative-time data lets us test timing sensitivity.
-- The system stays silent for a business that genuinely needed the bridge. The risky scenario sits on this line — the reliable payer's amount is insufficient, so no safe bridge exists.
-- The bridge amount exceeds the overdraft limit. All scenarios are verified against the €50K cap.
-- The bridge window exceeds 30 days. All scenarios are verified: healthy (28 days), deteriorating (25 days), transition (21 days).
+- The system fails to predict a gap that only exists because a payer is late. The Fika Cycle 2 scenario tests this — the receivable is due before payroll, but the system knows the payer won't pay on time.
+- The bridge amount exceeds the overdraft limit. All scenarios are verified against the £50K cap.
+- The bridge window exceeds 30 days. All scenarios verified: healthy (28 days), deteriorating (26 days), Fika Cycle 1 (12 days), Fika Cycle 2 (7 days).
 
 *In the product:*
-- A reliable payer starts sliding and the user loses the bridge without warning. The deteriorating and transition scenarios test the early warning → graceful decline arc.
+- A reliable payer starts sliding and the user has no visibility. The early warning and late-payment tracking in the timeline sidebar address this — the user sees "Nordic Events due" go amber/overdue, then "Nordic Events paid — 8 days late."
 - Default rates on bridged payments exceed projections. The guardrails have a kill threshold on annual default rate and a max capital deployed ceiling.
 - The feature attracts customers who are insolvent, not illiquid. Purpose-binding and auto-pull are the design constraints that prevent this.
 
@@ -92,9 +101,7 @@ The model assumes bridge-only against payers with established payment history. I
 
 The auto-pull is the highest-stakes moment. When the payer actually pays the invoice, Pleo automatically pulls the advance — not when the invoice is due, but when the money lands. The user needs to know this is coming and exactly when. If it surprises them, trust is destroyed in one transaction. The system must be transparent about the terms at the moment of the advance, not buried in fine print.
 
-The decline is invisible. If the system can't find a safe bridge, the option simply never surfaces. This is the right design: a business in a cash flow crunch that gets told "no" is worse off than before they asked.
-
-The early warning is the middle ground. When a payer's trend is concerning, the system doesn't just cut the user off — it bridges now, flags the risk, and gives the user time to act before the next cycle. If the trend continues, the graceful decline explains what changed and suggests alternatives (overdraft, contact the payer). The user is never surprised.
+The early warning is how the system builds trust over time. When a payer's trend is concerning, the system doesn't hide it — it surfaces the data ("Their last 3 invoices were 2, 5, and 7 days late") and lets the user see what the system sees. When the payer then pays late and the system had already flagged it, trust compounds. The system was right, and it told you.
 
 The recommendation itself carries weight. If the system says "we can bridge this" and the business does, they're trusting Pleo's judgment about the payer's reliability. If the payer then doesn't pay on time and the 30-day window closes, who's accountable? The system should never frame a recommendation as a guarantee. The language is "we can bridge" — not "this is safe."
 
@@ -102,7 +109,7 @@ The recommendation itself carries weight. If the system says "we can bridge this
 
 **What We're Not Prioritizing**
 
-- **AI in the credit decision:** The bridge recommendation is rule-based. If AI is introduced later (e.g., personalized rationale generation), EU AI Act Article 50 compliance becomes relevant — the design thinking exists in `model-spec-compliance-agent.md` but nothing is built.
+- **AI in the credit decision:** The bridge recommendation is rule-based. If AI is introduced later (e.g., personalized rationale generation), EU AI Act Article 50 compliance becomes relevant — the design thinking exists in `thinking/model-spec-compliance-agent.md` but nothing is built.
 - **Multi-market regulatory compliance:** the prototype assumes a simple market to demonstrate the product value. Scaling the credit decisioning engine across European regulators is the architecture problem described in the role and will be tackled, but is out of scope for this build.
 - **Disputed invoices:** what happens when the payer contests the invoice after Pleo has advanced funds. Real risk, needs legal and product design, not prototype scope.
 - **Flexibility on auto-pull:** customers will want the option to keep the advance after the receivable pays. This needs data on whether offering flexibility changes who adopts the product and how it affects default rates before touching it.
@@ -117,5 +124,5 @@ The recommendation itself carries weight. If the system says "we can bridge this
 - How do existing overdraft customers actually use their credit line today? What percentage are using it for timing problems vs. structural shortfalls? This determines the addressable market for the bridge feature. Although, I don't think this is something users think is possible so they may enjoy it even if they don't have too many timing problems. 
 - What's the real distribution of invoice payment terms and late-payment patterns in Pleo's data? The risk model assumes averages. The tails are where it breaks.
 - How does the sub-account funding feature usage correlate with cash flow gaps? Businesses already splitting overdraft into purpose-allocated sub-accounts might be natural early adopters. They're already thinking in terms of purpose-bound credit.
-- Could we offer a partial bridge backed by both the invoice and the overdraft limit when the invoice alone doesn't cover the gap? This would expand coverage to cases like Norde Health where the reliable payer's amount is insufficient. Would need clean cohorts to track whether hybrid bridges behave differently from pure invoice bridges — default rates, repayment timing, user behavior over time. The cohort separation is non-negotiable: mixing hybrid and pure bridge data would poison both signals.
+- Could we offer a partial bridge backed by both the invoice and the overdraft limit when the invoice alone doesn't cover the gap? Would need clean cohorts to track whether hybrid bridges behave differently from pure invoice bridges — default rates, repayment timing, user behavior over time. The cohort separation is non-negotiable: mixing hybrid and pure bridge data would poison both signals.
 - What are the markets we are interested in shipping? I would want to understand regulatory constraints in each market. For example: The EU AI Act hits financial services on August 2, 2026, which means AI systems must be fully compliant by that date.
