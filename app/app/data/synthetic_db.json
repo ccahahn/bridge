@@ -28,16 +28,6 @@
       "decline_reason": null
     },
     {
-      "id": "risky",
-      "business_id": "biz_002",
-      "label": "The bridge is risky",
-      "tagline": "Similar gap, unreliable payer",
-      "primary_payer_id": "pyr_003",
-      "recommendation": null,
-      "resolution": null,
-      "decline_reason": "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but £22,000 doesn’t cover the £56,000 gap. No safe bridge available."
-    },
-    {
       "id": "deteriorating",
       "business_id": "biz_004",
       "label": "Bridge with caution",
@@ -137,19 +127,6 @@
       "scenario": "bridge_works"
     },
     {
-      "business_id": "biz_002",
-      "name": "Norde Health",
-      "industry": "Health Tech",
-      "overdraft_limit": 50000,
-      "current_balance": 22000,
-      "typical_buffer": 8000,
-      "monthly_revenue_avg": 200000,
-      "months_on_pleo": 14,
-      "balance_trend": "stable",
-      "overdraft_usage_trend": "stable",
-      "scenario": "bridge_risky"
-    },
-    {
       "business_id": "biz_004",
       "name": "Vero Analytics",
       "industry": "Data Consulting",
@@ -194,24 +171,6 @@
       "due_in_days": 15,
       "recurring": true,
       "description": "Studio lease"
-    },
-    {
-      "obligation_id": "obl_003",
-      "business_id": "biz_002",
-      "type": "payroll",
-      "amount": 58000,
-      "due_in_days": 11,
-      "recurring": true,
-      "description": "Monthly payroll - 18 employees"
-    },
-    {
-      "obligation_id": "obl_004",
-      "business_id": "biz_002",
-      "type": "vendor",
-      "amount": 12000,
-      "due_in_days": 7,
-      "recurring": false,
-      "description": "Fleet maintenance invoice"
     },
     {
       "obligation_id": "obl_007",
@@ -275,22 +234,6 @@
       "invoice_amount": 8000,
       "due_in_days": 40,
       "description": "Logo refresh - Bloom Bakery"
-    },
-    {
-      "receivable_id": "rec_003",
-      "business_id": "biz_002",
-      "payer_id": "pyr_003",
-      "invoice_amount": 65000,
-      "due_in_days": 30,
-      "description": "February freight contract - SlowShip Retail"
-    },
-    {
-      "receivable_id": "rec_004",
-      "business_id": "biz_002",
-      "payer_id": "pyr_004",
-      "invoice_amount": 22000,
-      "due_in_days": 25,
-      "description": "Express delivery batch - QuickMart"
     },
     {
       "receivable_id": "rec_006",
@@ -381,70 +324,6 @@
       ],
       "trend": "stable",
       "first_invoice_months_ago": 5
-    },
-    {
-      "payer_id": "pyr_003",
-      "payer_name": "SlowShip Retail",
-      "total_invoices": 10,
-      "paid_on_time": 5,
-      "avg_days_to_pay": 42,
-      "avg_days_late_when_late": 18,
-      "last_5_payments": [
-        {
-          "days_to_pay": 38,
-          "on_time": false
-        },
-        {
-          "days_to_pay": 45,
-          "on_time": false
-        },
-        {
-          "days_to_pay": 30,
-          "on_time": true
-        },
-        {
-          "days_to_pay": 50,
-          "on_time": false
-        },
-        {
-          "days_to_pay": 48,
-          "on_time": false
-        }
-      ],
-      "trend": "deteriorating",
-      "first_invoice_months_ago": 20
-    },
-    {
-      "payer_id": "pyr_004",
-      "payer_name": "QuickMart",
-      "total_invoices": 8,
-      "paid_on_time": 7,
-      "avg_days_to_pay": 18,
-      "avg_days_late_when_late": 3,
-      "last_5_payments": [
-        {
-          "days_to_pay": 17,
-          "on_time": true
-        },
-        {
-          "days_to_pay": 19,
-          "on_time": true
-        },
-        {
-          "days_to_pay": 16,
-          "on_time": true
-        },
-        {
-          "days_to_pay": 22,
-          "on_time": false
-        },
-        {
-          "days_to_pay": 18,
-          "on_time": true
-        }
-      ],
-      "trend": "stable",
-      "first_invoice_months_ago": 16
     },
     {
       "payer_id": "pyr_006",
