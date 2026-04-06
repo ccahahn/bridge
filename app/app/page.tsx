@@ -122,8 +122,8 @@ function buildScenarios(): Record<string, Scenario> {
 const SCENARIOS = buildScenarios();
 
 // ─── Helpers ───
-const eur = (n: number) =>
-  new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+const gbp = (n: number) =>
+  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
 
 function projectBalance(scenario: Scenario, numDays = NUM_DAYS) {
   const points: { day: number; balance: number }[] = [];
@@ -220,7 +220,7 @@ function CashFlowChart({ scenario, currentDay, approved, approvedSecond = false 
 
       {[0, 1, 2, 3, 4].map((i) => {
         const val = minBal + (range * i) / 4;
-        return (<g key={i}><line x1={pad.l} y1={y(val)} x2={width - pad.r} y2={y(val)} stroke="#e8e8ec" strokeWidth="1" /><text x={pad.l - 8} y={y(val) + 4} textAnchor="end" fill="#8c8c9a" fontSize="10" fontFamily="'DM Sans', sans-serif">{val >= 1000 ? `\u20AC${(val / 1000).toFixed(0)}k` : `\u20AC${val.toFixed(0)}`}</text></g>);
+        return (<g key={i}><line x1={pad.l} y1={y(val)} x2={width - pad.r} y2={y(val)} stroke="#e8e8ec" strokeWidth="1" /><text x={pad.l - 8} y={y(val) + 4} textAnchor="end" fill="#8c8c9a" fontSize="10" fontFamily="'DM Sans', sans-serif">{val >= 1000 ? `£${(val / 1000).toFixed(0)}k` : `£${val.toFixed(0)}`}</text></g>);
       })}
 
       {dayLabels.map((d) => (<text key={d} x={x(d)} y={height - 6} textAnchor="middle" fill="#8c8c9a" fontSize="10" fontFamily="'DM Sans', sans-serif">T+{d}</text>))}
@@ -393,22 +393,22 @@ export default function PleoBridgeDemo() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Current Balance</div>
-              <div style={{ fontSize: 26, fontWeight: 700, color: balanceColor, transition: "color 0.3s" }}>{eur(currentBalance)}</div>
-              {approved && !resolved && scenario.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge active {"\u00B7"} {eur(scenario.recommendation.amount)}</div>}
-              {approvedSecond && !resolvedSecond && sc2?.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge 2 active {"\u00B7"} {eur(sc2.recommendation.amount)}</div>}
+              <div style={{ fontSize: 26, fontWeight: 700, color: balanceColor, transition: "color 0.3s" }}>{gbp(currentBalance)}</div>
+              {approved && !resolved && scenario.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge active {"\u00B7"} {gbp(scenario.recommendation.amount)}</div>}
+              {approvedSecond && !resolvedSecond && sc2?.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge 2 active {"\u00B7"} {gbp(sc2.recommendation.amount)}</div>}
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Outgoing</div>
-              <div style={{ fontSize: 26, fontWeight: 700, color: "#d94f4f" }}>{eur(scenario.obligations.reduce((s, o) => s + o.amount, 0))}</div>
+              <div style={{ fontSize: 26, fontWeight: 700, color: "#d94f4f" }}>{gbp(scenario.obligations.reduce((s, o) => s + o.amount, 0))}</div>
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Incoming</div>
-              <div style={{ fontSize: 26, fontWeight: 700, color: "#0f8a5f" }}>{eur(scenario.receivables.reduce((s, r) => s + r.amount, 0))}</div>
+              <div style={{ fontSize: 26, fontWeight: 700, color: "#0f8a5f" }}>{gbp(scenario.receivables.reduce((s, r) => s + r.amount, 0))}</div>
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft Limit</div>
-              <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(scenario.overdraftLimit - (approved && !resolved && scenario.recommendation ? scenario.recommendation.amount : 0) - (approvedSecond && !resolvedSecond && sc2?.recommendation ? sc2.recommendation.amount : 0))}</div>
-              {(approved && !resolved && scenario.recommendation || approvedSecond && !resolvedSecond && sc2?.recommendation) && <div style={{ fontSize: 11, color: "#e0a030", marginTop: 4 }}>{eur((approved && !resolved && scenario.recommendation ? scenario.recommendation.amount : 0) + (approvedSecond && !resolvedSecond && sc2?.recommendation ? sc2.recommendation.amount : 0))} reserved for bridge</div>}
+              <div style={{ fontSize: 26, fontWeight: 700 }}>{gbp(scenario.overdraftLimit - (approved && !resolved && scenario.recommendation ? scenario.recommendation.amount : 0) - (approvedSecond && !resolvedSecond && sc2?.recommendation ? sc2.recommendation.amount : 0))}</div>
+              {(approved && !resolved && scenario.recommendation || approvedSecond && !resolvedSecond && sc2?.recommendation) && <div style={{ fontSize: 11, color: "#e0a030", marginTop: 4 }}>{gbp((approved && !resolved && scenario.recommendation ? scenario.recommendation.amount : 0) + (approvedSecond && !resolvedSecond && sc2?.recommendation ? sc2.recommendation.amount : 0))} reserved for bridge</div>}
             </div>
           </div>
 
@@ -487,7 +487,7 @@ export default function PleoBridgeDemo() {
                           </div>
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 600, color: item.kind === "out" ? "#d94f4f" : isOverdue ? "#c49a20" : "#0f8a5f" }}>
-                          {item.kind === "out" ? "-" : "+"}{eur(item.amount)}
+                          {item.kind === "out" ? "-" : "+"}{gbp(item.amount)}
                         </div>
                       </div>
                     </div>
@@ -513,7 +513,7 @@ export default function PleoBridgeDemo() {
               <div style={{ padding: "24px 28px" }}>
                 <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}>
                   Your payment from <span style={{ color: "#0f8a5f" }}>{scenario.receivables[0].payer}</span> isn&apos;t due for {scenario.receivables[0].dueDay - currentDay} days, but you have {scenario.obligations[0].type} in <span style={{ color: "#d94f4f" }}>{scenario.obligations[0].dueDay - currentDay} days</span>.
-                  {" "}We can bridge <strong>{eur(scenario.recommendation.amount)}</strong> to cover the gap and keep your usual buffer.
+                  {" "}We can bridge <strong>{gbp(scenario.recommendation.amount)}</strong> to cover the gap and keep your usual buffer.
                 </div>
 
                 <div style={{ fontSize: 13, color: "#8c8c9a", marginBottom: 20 }}>
@@ -589,7 +589,7 @@ export default function PleoBridgeDemo() {
               <div style={{ padding: "24px 28px" }}>
                 <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}>
                   {sc2.recommendation.rationale.split(". We can bridge")[0]}.
-                  {" "}We can bridge <strong>{eur(sc2.recommendation.amount)}</strong> so payroll is covered regardless.
+                  {" "}We can bridge <strong>{gbp(sc2.recommendation.amount)}</strong> so payroll is covered regardless.
                 </div>
                 <div style={{ fontSize: 13, color: "#8c8c9a", marginBottom: 20 }}>
                   No interest. Auto-resolves when {scenario.payer.name} pays.

@@ -16,14 +16,14 @@
         },
         "decision": "advance",
         "confidence": "high",
-        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of €20,500 covers your payroll and rent plus your typical €5,000 buffer. We bridge the timing, not the invoice.",
+        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of £20,500 covers your payroll and rent plus your typical £5,000 buffer. We bridge the timing, not the invoice.",
         "risk_factors": [
           "One late payment in last 12 invoices (35 days vs 30-day term)"
         ]
       },
       "resolution": {
         "day": 35,
-        "message": "Acme Corp paid invoice #INV-2024-038. €20,500 bridge auto-resolved."
+        "message": "Acme Corp paid invoice #INV-2024-038. £20,500 bridge auto-resolved."
       },
       "decline_reason": null
     },
@@ -35,7 +35,7 @@
       "primary_payer_id": "pyr_003",
       "recommendation": null,
       "resolution": null,
-      "decline_reason": "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but €22,000 doesn’t cover the €56,000 gap. No safe bridge available."
+      "decline_reason": "SlowShip Retail has only paid 5 of 10 invoices on time (50%), with a deteriorating trend. Last 4 payments averaged 42 days. QuickMart is reliable but £22,000 doesn’t cover the £56,000 gap. No safe bridge available."
     },
     {
       "id": "deteriorating",
@@ -53,7 +53,7 @@
         },
         "decision": "advance",
         "confidence": "medium",
-        "rationale": "TrustBank has paid 13 of 15 invoices on time (87%) with an average of 30 days. The bridge of €44,000 covers your payroll and VAT payments plus your typical €6,000 buffer. Their recent payments have been slowing, which we’re watching.",
+        "rationale": "TrustBank has paid 13 of 15 invoices on time (87%) with an average of 30 days. The bridge of £44,000 covers your payroll and VAT payments plus your typical £6,000 buffer. Their recent payments have been slowing, which we’re watching.",
         "risk_factors": [
           "TrustBank’s last 4 payments trending later: 35 → 38 → 42 → 45 days"
         ]
@@ -61,7 +61,7 @@
       "warning": "We’ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days — up from their usual average of 30. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with TrustBank or setting up your overdraft as a backup.",
       "resolution": {
         "day": 32,
-        "message": "TrustBank paid invoice #INV-2024-092. €44,000 bridge auto-resolved."
+        "message": "TrustBank paid invoice #INV-2024-092. £44,000 bridge auto-resolved."
       },
       "decline_reason": null
     },
@@ -81,7 +81,7 @@
         },
         "decision": "advance",
         "confidence": "medium",
-        "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of €16,500 covers your payroll and supplier payments plus your typical €3,500 buffer. Their recent trend is a concern we’re watching.",
+        "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of £16,500 covers your payroll and supplier payments plus your typical £3,500 buffer. Their recent trend is a concern we’re watching.",
         "risk_factors": [
           "Nordic Events’ last 3 payments increasingly late: 2 → 5 → 7 days past due"
         ]
@@ -89,7 +89,7 @@
       "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices were 2, 5, and 7 days late — a clear upward trend.",
       "resolution": {
         "day": 18,
-        "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. €16,500 bridge auto-resolved."
+        "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. £16,500 bridge auto-resolved."
       },
       "second_cycle": {
         "gap_detection_day": 35,
@@ -104,14 +104,14 @@
           },
           "decision": "advance",
           "confidence": "medium",
-          "rationale": "Nordic Events owes you €25,000 — due before payroll. But they’ve been paying 2 to 8 days late recently. If that continues, the money won’t land in time. We can bridge €16,500 so payroll is covered regardless.",
+          "rationale": "Nordic Events owes you £25,000 — due before payroll. But they’ve been paying 2 to 8 days late recently. If that continues, the money won’t land in time. We can bridge £16,500 so payroll is covered regardless.",
           "risk_factors": [
             "Nordic Events’ recent payments: 2 → 5 → 7 → 8 days late"
           ]
         },
         "resolution": {
           "day": 43,
-          "message": "Nordic Events paid invoice #INV-2024-157 — 8 days late. €16,500 bridge auto-resolved."
+          "message": "Nordic Events paid invoice #INV-2024-157 — 8 days late. £16,500 bridge auto-resolved."
         },
         "decline_reason": null
       },
