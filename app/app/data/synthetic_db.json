@@ -95,7 +95,7 @@
         "gap_detection_day": 28,
         "obligation_day": 38,
         "receivable_id": "rec_011",
-        "decline_reason": "You have a €25,000 receivable from Nordic Events due in 2 days, but we can’t confidently bridge against it. Last cycle, Nordic paid 8 days late — their worst yet. Three of their last four payments have been significantly late (2 → 6 → 11 → 8 days). Your overdraft facility can cover the €8,500 shortfall until Nordic pays."
+        "decline_reason": "Last cycle, we bridged €16,500 against Nordic Events and they paid 8 days late — consistent with the trend we flagged (2 → 6 → 11 → 8 days late). We can’t confidently recommend a bridge this time. Your overdraft facility can cover the shortfall until your next receivable lands."
       },
       "decline_reason": null,
       "post_resolution_notice": {
@@ -294,7 +294,7 @@
       "receivable_id": "rec_010",
       "business_id": "biz_006",
       "payer_id": "pyr_009",
-      "invoice_amount": 28000,
+      "invoice_amount": 20000,
       "due_in_days": 10,
       "description": "March corporate events catering - Nordic Events"
     },
@@ -303,7 +303,7 @@
       "business_id": "biz_006",
       "payer_id": "pyr_009",
       "invoice_amount": 25000,
-      "due_in_days": 30,
+      "due_in_days": 45,
       "description": "April corporate events catering - Nordic Events"
     }
   ],
