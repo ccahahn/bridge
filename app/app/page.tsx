@@ -540,15 +540,11 @@ export default function PleoBridgeDemo() {
                 display: "flex", alignItems: "center", gap: 8,
               }}>About your next cycle</div>
               <div style={{ padding: "24px 28px" }}>
-                <div style={{ fontSize: 13, color: "#4a4a48", lineHeight: 1.7, maxWidth: 560 }}>
-                  {scenario.secondCycle.declineReason}
-                </div>
-                <div style={{ marginTop: 16, fontSize: 12, color: "#8a6d1b" }}>
-                  You can add funds or activate your overdraft to cover this gap.
-                </div>
-                <div style={{ marginTop: 8, fontSize: 11, color: "#8c8c9a", fontStyle: "italic" }}>
-                  We prefer to be honest now than let you find out at payroll.
-                </div>
+                {scenario.secondCycle.declineReason.split("\n\n").map((para, i) => (
+                  <div key={i} style={{ fontSize: 13, color: "#4a4a48", lineHeight: 1.7, maxWidth: 560, marginTop: i > 0 ? 12 : 0 }}>
+                    {para}
+                  </div>
+                ))}
               </div>
             </div>
           )}

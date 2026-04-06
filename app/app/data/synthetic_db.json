@@ -95,7 +95,7 @@
         "gap_detection_day": 28,
         "obligation_day": 38,
         "receivable_id": "rec_011",
-        "decline_reason": "Last cycle, we bridged €16,500 against Nordic Events and they paid 8 days late — consistent with the trend we flagged (2 → 6 → 11 → 8 days late). We can’t confidently recommend a bridge this time. Your overdraft facility can cover the shortfall until your next receivable lands."
+        "decline_reason": "Nordic Events has been paying later over recent cycles, most recently 8 days late. Given that pattern, we won’t bridge against them this time.\n\nYou can add funds or activate your overdraft to keep your next cycle on track.\n\nWe wanted to flag this early so you have time to plan."
       },
       "decline_reason": null,
       "post_resolution_notice": {
