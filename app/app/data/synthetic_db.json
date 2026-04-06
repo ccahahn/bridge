@@ -83,10 +83,10 @@
         "confidence": "medium",
         "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of €16,500 covers your payroll and supplier payments plus your typical €3,500 buffer. Their recent trend is a concern we’re watching.",
         "risk_factors": [
-          "Nordic Events’ last 3 payments trending later: 32 → 36 → 41 days"
+          "Nordic Events’ last 3 payments increasingly late: 2 → 6 → 11 days past due"
         ]
       },
-      "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices took 32, 36, and 41 days — up from their usual 25–28. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
+      "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices were 2, 6, and 11 days late — a clear upward trend. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
       "resolution": {
         "day": 18,
         "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. €16,500 bridge auto-resolved."
