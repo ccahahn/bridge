@@ -48,7 +48,7 @@
           "TrustBank’s last 4 payments trending later: 35 → 38 → 42 → 45 days"
         ]
       },
-      "warning": "We’ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days — up from their usual average of 30. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with TrustBank or setting up your overdraft as a backup.",
+      "warning": "We’ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days — up from their usual average of 30.",
       "resolution": {
         "day": 32,
         "message": "TrustBank paid invoice #INV-2024-092. £44,000 bridge auto-resolved."
