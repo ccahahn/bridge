@@ -83,10 +83,10 @@
         "confidence": "medium",
         "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of €16,500 covers your payroll and supplier payments plus your typical €3,500 buffer. Their recent trend is a concern we’re watching.",
         "risk_factors": [
-          "Nordic Events’ last 3 payments increasingly late: 2 → 6 → 11 days past due"
+          "Nordic Events’ last 3 payments increasingly late: 2 → 5 → 7 days past due"
         ]
       },
-      "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices were 2, 6, and 11 days late — a clear upward trend. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
+      "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices were 2, 5, and 7 days late — a clear upward trend. We’re still able to bridge this time, but if this trend continues, we may not recommend it next time. Consider following up with Nordic Events or setting up your overdraft as a backup.",
       "resolution": {
         "day": 18,
         "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. €16,500 bridge auto-resolved."
@@ -100,7 +100,7 @@
       "decline_reason": null,
       "post_resolution_notice": {
         "day": 18,
-        "message": "Your bridge resolved, but Nordic Events paid 8 days past their due date — their worst yet. Their recent pattern: 2, 6, 11, and now 8 days late. Given this trajectory, we likely can’t recommend a bridge next cycle. Consider setting up your overdraft as a backup or following up with Nordic Events about their payment schedule."
+        "message": "Your bridge resolved, but Nordic Events paid 8 days past their due date — continuing their trend (2 → 5 → 7 → 8 days late). Given this trajectory, we likely can’t recommend a bridge next cycle. Consider setting up your overdraft as a backup or following up with Nordic Events about their payment schedule."
       }
     }
   ],
@@ -465,8 +465,8 @@
       "payer_name": "Nordic Events",
       "total_invoices": 10,
       "paid_on_time": 7,
-      "avg_days_to_pay": 30,
-      "avg_days_late_when_late": 10,
+      "avg_days_to_pay": 31,
+      "avg_days_late_when_late": 5,
       "last_5_payments": [
         {
           "days_to_pay": 25,
@@ -481,11 +481,11 @@
           "on_time": false
         },
         {
-          "days_to_pay": 36,
+          "days_to_pay": 35,
           "on_time": false
         },
         {
-          "days_to_pay": 41,
+          "days_to_pay": 37,
           "on_time": false
         }
       ],
