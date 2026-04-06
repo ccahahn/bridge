@@ -92,10 +92,28 @@
         "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. €16,500 bridge auto-resolved."
       },
       "second_cycle": {
-        "gap_detection_day": 28,
+        "gap_detection_day": 35,
         "obligation_day": 38,
-        "receivable_id": "rec_011",
-        "decline_reason": "Nordic Events has been paying later over recent cycles, most recently 8 days late. Given that pattern, we won’t bridge against them this time.\n\nYou can add funds or activate your overdraft to keep your next cycle on track.\n\nWe wanted to flag this early so you have time to plan."
+        "recommendation": {
+          "amount": 16500,
+          "gap_breakdown": {
+            "obligation": 20000,
+            "balance": 7000,
+            "buffer": 3500,
+            "shortfall": 16500
+          },
+          "decision": "advance",
+          "confidence": "medium",
+          "rationale": "Nordic Events owes you €25,000 — due before payroll. But they’ve been paying 2 to 8 days late recently. If that continues, the money won’t land in time. We can bridge €16,500 so payroll is covered regardless.",
+          "risk_factors": [
+            "Nordic Events’ recent payments: 2 → 5 → 7 → 8 days late"
+          ]
+        },
+        "resolution": {
+          "day": 43,
+          "message": "Nordic Events paid invoice #INV-2024-157 — 8 days late. €16,500 bridge auto-resolved."
+        },
+        "decline_reason": null
       },
       "decline_reason": null,
       "post_resolution_notice": {
@@ -303,7 +321,7 @@
       "business_id": "biz_006",
       "payer_id": "pyr_009",
       "invoice_amount": 25000,
-      "due_in_days": 45,
+      "due_in_days": 35,
       "description": "April corporate events catering - Nordic Events"
     }
   ],

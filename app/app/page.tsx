@@ -19,7 +19,7 @@ interface Scenario {
   recommendation: Recommendation | null; resolution: Resolution | null;
   declineReason: string | null;
   warning: string | null;
-  secondCycle: { obligationDay: number; declineReason: string } | null;
+  secondCycle: { obligationDay: number; gapDetectionDay: number; recommendation: Recommendation | null; resolution: Resolution | null; declineReason: string | null } | null;
 }
 
 // ─── Constants ───
@@ -101,7 +101,17 @@ function buildScenarios(): Record<string, Scenario> {
       warning: sc.warning || null,
       secondCycle: sc.second_cycle ? {
         obligationDay: sc.second_cycle.obligation_day,
-        declineReason: sc.second_cycle.decline_reason,
+        gapDetectionDay: sc.second_cycle.gap_detection_day,
+        recommendation: sc.second_cycle.recommendation ? {
+          amount: sc.second_cycle.recommendation.amount,
+          gapBreakdown: sc.second_cycle.recommendation.gap_breakdown as GapBreakdown,
+          decision: sc.second_cycle.recommendation.decision,
+          confidence: sc.second_cycle.recommendation.confidence,
+          rationale: sc.second_cycle.recommendation.rationale,
+          riskFactors: sc.second_cycle.recommendation.risk_factors,
+        } : null,
+        resolution: sc.second_cycle.resolution || null,
+        declineReason: sc.second_cycle.decline_reason || null,
       } : null,
     };
   }
@@ -128,7 +138,7 @@ function projectBalance(scenario: Scenario, numDays = NUM_DAYS) {
   return points;
 }
 
-function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS) {
+function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS, approvedSecond = false) {
   if (!scenario.recommendation) return null;
   const points: { day: number; balance: number }[] = [];
   let bal = scenario.balance;
@@ -136,18 +146,29 @@ function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS) {
   const resolveDay = scenario.resolution?.day || scenario.receivables[0]?.dueDay || 40;
   const primaryRec = scenario.receivables.find((r) => r.payer === scenario.payer.name);
   const isLate = primaryRec && resolveDay > primaryRec.dueDay;
+
+  const sc2 = scenario.secondCycle;
+  const bridge2Day = sc2?.recommendation && approvedSecond ? sc2.gapDetectionDay + 1 : null;
+  const resolve2Day = sc2?.resolution?.day || null;
+  const secondRec = scenario.receivables.find((r) => r.payer === scenario.payer.name && r.id !== primaryRec?.id);
+  const isLate2 = approvedSecond && secondRec && resolve2Day && resolve2Day > secondRec.dueDay;
+
   for (let d = 0; d <= numDays; d++) {
     let dayBal = bal;
     if (d === bridgeDay) dayBal += scenario.recommendation.amount;
+    if (bridge2Day && d === bridge2Day && sc2?.recommendation) dayBal += sc2.recommendation.amount;
     scenario.obligations.forEach((ob) => { if (ob.dueDay === d) dayBal -= ob.amount; });
     scenario.receivables.forEach((rc) => {
       if (isLate && rc.id === primaryRec.id) {
         if (d === resolveDay) dayBal += rc.amount;
+      } else if (isLate2 && secondRec && rc.id === secondRec.id) {
+        if (d === resolve2Day) dayBal += rc.amount;
       } else {
         if (rc.dueDay === d) dayBal += rc.amount;
       }
     });
     if (d === resolveDay && scenario.recommendation) dayBal -= scenario.recommendation.amount;
+    if (resolve2Day && d === resolve2Day && sc2?.recommendation && approvedSecond) dayBal -= sc2.recommendation.amount;
     bal = dayBal;
     points.push({ day: d, balance: bal });
   }
@@ -155,14 +176,14 @@ function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS) {
 }
 
 // ─── Chart ───
-function CashFlowChart({ scenario, currentDay, approved }: { scenario: Scenario; currentDay: number; approved: boolean }) {
+function CashFlowChart({ scenario, currentDay, approved, approvedSecond = false }: { scenario: Scenario; currentDay: number; approved: boolean; approvedSecond?: boolean }) {
   const width = 680, height = 220;
   const pad = { t: 20, r: 20, b: 32, l: 56 };
   const iw = width - pad.l - pad.r;
   const ih = height - pad.t - pad.b;
 
   const baseline = projectBalance(scenario);
-  const bridged = approved ? projectWithBridge(scenario) : null;
+  const bridged = approved ? projectWithBridge(scenario, NUM_DAYS, approvedSecond) : null;
   const allVals = baseline.map((p) => p.balance);
   if (bridged) bridged.forEach((p) => allVals.push(p.balance));
   const minBal = Math.min(...allVals, 0);
@@ -251,25 +272,33 @@ export default function PleoBridgeDemo() {
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [approved, setApproved] = useState(false);
   const [resolved, setResolved] = useState(false);
+  const [showSecondRec, setShowSecondRec] = useState(false);
+  const [approvedSecond, setApprovedSecond] = useState(false);
+  const [resolvedSecond, setResolvedSecond] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showScenarioMenu, setShowScenarioMenu] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const scenario = SCENARIOS[activeScenario];
   const baseline = projectBalance(scenario);
-  const bridged = approved ? projectWithBridge(scenario) : null;
+  const bridged = approved ? projectWithBridge(scenario, NUM_DAYS, approvedSecond) : null;
   const currentBalance = (approved && bridged ? bridged : baseline).find((p) => p.day === currentDay)?.balance ?? scenario.balance;
 
   const gapDay = scenario.obligations[0]?.dueDay - 2;
   const shouldShowRec = scenario.recommendation && currentDay >= (gapDay > 0 ? gapDay : 7);
   const shouldShowDecline = !scenario.recommendation && scenario.declineReason && currentDay >= (gapDay > 0 ? gapDay : 7);
   const shouldResolve = scenario.resolution && approved && currentDay >= scenario.resolution.day;
-  const shouldShowSecondDecline = scenario.secondCycle && resolved && currentDay >= (scenario.secondCycle.obligationDay - 2);
+  const sc2 = scenario.secondCycle;
+  const shouldShowSecondRec = sc2?.recommendation && resolved && !approvedSecond && currentDay >= sc2.gapDetectionDay;
+  const shouldShowSecondDecline = sc2?.declineReason && !sc2.recommendation && resolved && currentDay >= (sc2.obligationDay - 2);
+  const shouldResolveSecond = sc2?.resolution && approvedSecond && currentDay >= sc2.resolution.day;
 
   useEffect(() => { if (shouldShowRec && !approved) { setShowRecommendation(true); setPlaying(false); } }, [shouldShowRec, approved]);
   useEffect(() => { if (shouldShowDecline) setPlaying(false); }, [shouldShowDecline]);
   useEffect(() => { if (shouldResolve && !resolved) setResolved(true); }, [shouldResolve, resolved]);
+  useEffect(() => { if (shouldShowSecondRec && !showSecondRec) { setShowSecondRec(true); setPlaying(false); } }, [shouldShowSecondRec, showSecondRec]);
   useEffect(() => { if (shouldShowSecondDecline) setPlaying(false); }, [shouldShowSecondDecline]);
+  useEffect(() => { if (shouldResolveSecond && !resolvedSecond) setResolvedSecond(true); }, [shouldResolveSecond, resolvedSecond]);
 
   useEffect(() => {
     if (playing) {
@@ -281,11 +310,13 @@ export default function PleoBridgeDemo() {
   }, [playing]);
 
   const reset = useCallback(() => {
-    setCurrentDay(0); setShowRecommendation(false); setApproved(false); setResolved(false); setPlaying(false);
+    setCurrentDay(0); setShowRecommendation(false); setApproved(false); setResolved(false);
+    setShowSecondRec(false); setApprovedSecond(false); setResolvedSecond(false); setPlaying(false);
   }, []);
 
   const switchScenario = (id: string) => { setActiveScenario(id); setShowScenarioMenu(false); reset(); };
   const handleApprove = () => { setApproved(true); setShowRecommendation(false); setPlaying(true); };
+  const handleApproveSecond = () => { setApprovedSecond(true); setShowSecondRec(false); setPlaying(true); };
 
   const balanceColor = currentBalance < 0 ? "#d94f4f" : currentBalance < scenario.buffer ? "#e0a030" : "#1a1a2e";
 
@@ -364,6 +395,7 @@ export default function PleoBridgeDemo() {
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Current Balance</div>
               <div style={{ fontSize: 26, fontWeight: 700, color: balanceColor, transition: "color 0.3s" }}>{eur(currentBalance)}</div>
               {approved && !resolved && scenario.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge active {"\u00B7"} {eur(scenario.recommendation.amount)}</div>}
+              {approvedSecond && !resolvedSecond && sc2?.recommendation && <div style={{ fontSize: 11, color: "#0f8a5f", marginTop: 4, fontWeight: 500 }}>Bridge 2 active {"\u00B7"} {eur(sc2.recommendation.amount)}</div>}
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Outgoing</div>
@@ -375,8 +407,8 @@ export default function PleoBridgeDemo() {
             </div>
             <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 11, color: "#8c8c9a", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Overdraft Limit</div>
-              <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(approved && !resolved && scenario.recommendation ? scenario.overdraftLimit - scenario.recommendation.amount : scenario.overdraftLimit)}</div>
-              {approved && !resolved && scenario.recommendation && <div style={{ fontSize: 11, color: "#e0a030", marginTop: 4 }}>{eur(scenario.recommendation.amount)} reserved for bridge</div>}
+              <div style={{ fontSize: 26, fontWeight: 700 }}>{eur(scenario.overdraftLimit - (approved && !resolved && scenario.recommendation ? scenario.recommendation.amount : 0) - (approvedSecond && !resolvedSecond && sc2?.recommendation ? sc2.recommendation.amount : 0))}</div>
+              {(approved && !resolved && scenario.recommendation || approvedSecond && !resolvedSecond && sc2?.recommendation) && <div style={{ fontSize: 11, color: "#e0a030", marginTop: 4 }}>{eur((approved && !resolved && scenario.recommendation ? scenario.recommendation.amount : 0) + (approvedSecond && !resolvedSecond && sc2?.recommendation ? sc2.recommendation.amount : 0))} reserved for bridge</div>}
             </div>
           </div>
 
@@ -391,37 +423,52 @@ export default function PleoBridgeDemo() {
                 </div>
               </div>
               <input type="range" min={0} max={NUM_DAYS} value={currentDay} onChange={(e) => { setCurrentDay(parseInt(e.target.value)); setPlaying(false); }} style={{ width: "100%", marginBottom: 8, accentColor: "#1a1a2e" }} />
-              <CashFlowChart scenario={scenario} currentDay={currentDay} approved={approved} />
+              <CashFlowChart scenario={scenario} currentDay={currentDay} approved={approved} approvedSecond={approvedSecond} />
             </div>
 
             {/* Timeline */}
             <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #e8e8ec" }}>
               <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Upcoming</div>
               {(() => {
+                // Build a map of receivable ID → actual payment day for late payers
+                const latePayments: Record<string, number> = {};
                 const primaryRec = scenario.receivables.find((r) => r.payer === scenario.payer.name);
-                const paidDay = scenario.resolution?.day;
-                const isLate = primaryRec && paidDay && paidDay > primaryRec.dueDay;
-                const daysLate = isLate ? paidDay - primaryRec.dueDay : 0;
+                if (primaryRec && scenario.resolution && scenario.resolution.day > primaryRec.dueDay) {
+                  latePayments[primaryRec.id] = scenario.resolution.day;
+                }
+                const secondRec = scenario.receivables.find((r) => r.payer === scenario.payer.name && r.id !== primaryRec?.id);
+                if (secondRec && sc2?.resolution && sc2.resolution.day > secondRec.dueDay) {
+                  latePayments[secondRec.id] = sc2.resolution.day;
+                }
 
-                type TimelineItem = { id: string; kind: "out" | "in"; label: string; dueDay: number; amount: number; late?: "due" | "paid" };
+                type TimelineItem = { id: string; kind: "out" | "in"; label: string; dueDay: number; amount: number; late?: "due" | "paid"; paidDay?: number };
 
                 const items: TimelineItem[] = [
                   ...scenario.obligations.map((o) => ({ id: o.id, kind: "out" as const, label: o.label, dueDay: o.dueDay, amount: o.amount })),
-                  ...scenario.receivables.map((r) => ({
-                    id: r.id, kind: "in" as const, dueDay: r.dueDay, amount: r.amount,
-                    label: isLate && r.id === primaryRec.id ? `${r.payer} due` : `${r.payer} payment`,
-                    late: isLate && r.id === primaryRec.id ? "due" as const : undefined,
-                  })),
-                  ...(isLate && primaryRec ? [{
-                    id: `${primaryRec.id}-paid`, kind: "in" as const, dueDay: paidDay,
-                    amount: primaryRec.amount, label: `${primaryRec.payer} paid \u2014 ${daysLate} days late`, late: "paid" as const,
-                  }] : []),
+                  ...scenario.receivables.map((r) => {
+                    const latePaidDay = latePayments[r.id];
+                    return {
+                      id: r.id, kind: "in" as const, dueDay: r.dueDay, amount: r.amount,
+                      label: latePaidDay ? `${r.payer} due` : `${r.payer} payment`,
+                      late: latePaidDay ? "due" as const : undefined,
+                      paidDay: latePaidDay,
+                    };
+                  }),
+                  ...Object.entries(latePayments).map(([recId, paidDay]) => {
+                    const rec = scenario.receivables.find((r) => r.id === recId)!;
+                    const daysLate = paidDay - rec.dueDay;
+                    return {
+                      id: `${recId}-paid`, kind: "in" as const, dueDay: paidDay,
+                      amount: rec.amount, label: `${rec.payer} paid \u2014 ${daysLate} days late`, late: "paid" as const,
+                    };
+                  }),
                 ];
 
                 return items.sort((a, b) => a.dueDay - b.dueDay).map((item, i) => {
                   const isPast = currentDay >= item.dueDay;
-                  const isOverdue = item.late === "due" && currentDay >= item.dueDay && (!paidDay || currentDay < paidDay);
-                  const overdueResolved = item.late === "due" && paidDay && currentDay >= paidDay;
+                  const itemPaidDay = item.paidDay;
+                  const isOverdue = item.late === "due" && currentDay >= item.dueDay && (!itemPaidDay || currentDay < itemPaidDay);
+                  const overdueResolved = item.late === "due" && itemPaidDay && currentDay >= itemPaidDay;
 
                   return (
                     <div key={i} style={{
@@ -529,8 +576,41 @@ export default function PleoBridgeDemo() {
             </div>
           )}
 
-          {/* Graceful decline — second cycle after a successful bridge */}
-          {shouldShowSecondDecline && scenario.secondCycle && (
+          {/* Second cycle — bridge recommendation (predicted gap) */}
+          {showSecondRec && !approvedSecond && sc2?.recommendation && (
+            <div style={{
+              background: "#fff", borderRadius: 14, border: "2px solid #0f8a5f",
+              padding: 0, marginBottom: 24, overflow: "hidden", animation: "slideIn 0.5s ease-out",
+            }}>
+              <div style={{
+                background: "#e6f5ee", padding: "10px 24px", fontSize: 12, fontWeight: 500, color: "#0f7a52",
+                display: "flex", alignItems: "center", gap: 8,
+              }}>{"\u26A1"} Invoice Bridge — Cycle 2</div>
+              <div style={{ padding: "24px 28px" }}>
+                <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}>
+                  {sc2.recommendation.rationale.split(". We can bridge")[0]}.
+                  {" "}We can bridge <strong>{eur(sc2.recommendation.amount)}</strong> so payroll is covered regardless.
+                </div>
+                <div style={{ fontSize: 13, color: "#8c8c9a", marginBottom: 20 }}>
+                  No interest. Auto-resolves when {scenario.payer.name} pays.
+                </div>
+                <div style={{ fontSize: 11, color: "#b0b0ba", marginBottom: 20 }}>This recommendation was generated by Pleo&apos;s credit assessment system based on your payment history. The final decision is yours.</div>
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <button onClick={handleApproveSecond} style={{
+                    padding: "12px 32px", background: "#0f8a5f", color: "#fff", border: "none", borderRadius: 10,
+                    fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                  }}>Approve Bridge</button>
+                  <button onClick={() => { setShowSecondRec(false); setPlaying(true); }} style={{
+                    padding: "12px 24px", background: "#fff", color: "#8c8c9a", border: "1px solid #e0e0e6",
+                    borderRadius: 10, fontSize: 14, fontWeight: 500, cursor: "pointer", fontFamily: "inherit",
+                  }}>Not now</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Second cycle — graceful decline (if no recommendation) */}
+          {shouldShowSecondDecline && sc2?.declineReason && (
             <div style={{
               background: "#fff", border: "1px solid #f0e0a0", borderRadius: 14, padding: 0,
               marginBottom: 24, overflow: "hidden", animation: "slideIn 0.5s ease-out",
@@ -540,11 +620,25 @@ export default function PleoBridgeDemo() {
                 display: "flex", alignItems: "center", gap: 8,
               }}>About your next cycle</div>
               <div style={{ padding: "24px 28px" }}>
-                {scenario.secondCycle.declineReason.split("\n\n").map((para, i) => (
+                {sc2.declineReason.split("\n\n").map((para: string, i: number) => (
                   <div key={i} style={{ fontSize: 13, color: "#4a4a48", lineHeight: 1.7, maxWidth: 560, marginTop: i > 0 ? 12 : 0 }}>
                     {para}
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Second cycle resolution toast */}
+          {resolvedSecond && sc2?.resolution && (
+            <div style={{
+              background: "#e6f5ee", border: "1px solid #b7e4cd", borderRadius: 12, padding: "16px 24px",
+              marginBottom: 24, display: "flex", alignItems: "center", gap: 12, animation: "slideIn 0.4s ease-out",
+            }}>
+              <span style={{ fontSize: 20 }}>{"\u2713"}</span>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#0f7a52" }}>Bridge auto-resolved</div>
+                <div style={{ fontSize: 13, color: "#0f7a52", opacity: 0.8, marginTop: 2 }}>{sc2.resolution.message}</div>
               </div>
             </div>
           )}
