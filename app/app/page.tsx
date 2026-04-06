@@ -134,11 +134,19 @@ function projectWithBridge(scenario: Scenario, numDays = NUM_DAYS) {
   let bal = scenario.balance;
   const bridgeDay = Math.max(scenario.obligations[0].dueDay - 2, 1);
   const resolveDay = scenario.resolution?.day || scenario.receivables[0]?.dueDay || 40;
+  const primaryRec = scenario.receivables.find((r) => r.payer === scenario.payer.name);
+  const isLate = primaryRec && resolveDay > primaryRec.dueDay;
   for (let d = 0; d <= numDays; d++) {
     let dayBal = bal;
     if (d === bridgeDay) dayBal += scenario.recommendation.amount;
     scenario.obligations.forEach((ob) => { if (ob.dueDay === d) dayBal -= ob.amount; });
-    scenario.receivables.forEach((rc) => { if (rc.dueDay === d) dayBal += rc.amount; });
+    scenario.receivables.forEach((rc) => {
+      if (isLate && rc.id === primaryRec.id) {
+        if (d === resolveDay) dayBal += rc.amount;
+      } else {
+        if (rc.dueDay === d) dayBal += rc.amount;
+      }
+    });
     if (d === resolveDay && scenario.recommendation) dayBal -= scenario.recommendation.amount;
     bal = dayBal;
     points.push({ day: d, balance: bal });
