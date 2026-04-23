@@ -1,0 +1,10 @@
+thinking/
+docs/
+.DS_Store
+.next/
+__pycache__/
+*.pyc
+.env
+.env.local
+app/.env.local
+app/node_modules/

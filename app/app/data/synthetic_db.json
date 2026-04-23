@@ -1,0 +1,394 @@
+{
+  "scenarios": [
+    {
+      "id": "healthy",
+      "business_id": "biz_001",
+      "label": "The bridge works",
+      "tagline": "Healthy business, reliable payer, timing gap",
+      "primary_payer_id": "pyr_001",
+      "recommendation": {
+        "amount": 20500,
+        "gap_breakdown": {
+          "obligation": 46500,
+          "balance": 31000,
+          "buffer": 5000,
+          "shortfall": 15500
+        },
+        "decision": "advance",
+        "confidence": "high",
+        "rationale": "Acme Corp has paid 11 of 12 invoices on time, averaging 28 days. Their payment pattern is stable. The advance of £20,500 covers your payroll and rent plus your typical £5,000 buffer. We bridge the timing, not the invoice.",
+        "risk_factors": [
+          "One late payment in last 12 invoices (35 days vs 30-day term)"
+        ]
+      },
+      "resolution": {
+        "day": 35,
+        "message": "Acme Corp paid invoice #INV-2024-038. £20,500 bridge auto-resolved."
+      },
+      "decline_reason": null
+    },
+    {
+      "id": "deteriorating",
+      "business_id": "biz_004",
+      "label": "Bridge with caution",
+      "tagline": "Good lifetime stats, concerning recent trend",
+      "primary_payer_id": "pyr_006",
+      "recommendation": {
+        "amount": 44000,
+        "gap_breakdown": {
+          "obligation": 56000,
+          "balance": 18000,
+          "buffer": 6000,
+          "shortfall": 38000
+        },
+        "decision": "advance",
+        "confidence": "medium",
+        "rationale": "TrustBank has paid 13 of 15 invoices on time (87%) with an average of 30 days. The bridge of £44,000 covers your payroll and VAT payments plus your typical £6,000 buffer. Their recent payments have been slowing, which we’re watching.",
+        "risk_factors": [
+          "TrustBank’s last 4 payments trending later: 35 → 38 → 42 → 45 days"
+        ]
+      },
+      "warning": "We’ve noticed TrustBank has been paying later recently. Their last 4 invoices took 35, 38, 42, and 45 days — up from their usual average of 30.",
+      "resolution": {
+        "day": 32,
+        "message": "TrustBank paid invoice #INV-2024-092. £44,000 bridge auto-resolved."
+      },
+      "decline_reason": null
+    },
+    {
+      "id": "transition",
+      "business_id": "biz_006",
+      "label": "The transition",
+      "tagline": "When reliable becomes risky: two cycles",
+      "primary_payer_id": "pyr_009",
+      "recommendation": {
+        "amount": 16500,
+        "gap_breakdown": {
+          "obligation": 25000,
+          "balance": 12000,
+          "buffer": 3500,
+          "shortfall": 13000
+        },
+        "decision": "advance",
+        "confidence": "medium",
+        "rationale": "Nordic Events has paid 7 of 10 invoices on time, averaging 30 days. The bridge of £16,500 covers your payroll and supplier payments plus your typical £3,500 buffer. Their recent trend is a concern we’re watching.",
+        "risk_factors": [
+          "Nordic Events’ last 3 payments increasingly late: 2 → 5 → 7 days past due"
+        ]
+      },
+      "warning": "We’ve noticed Nordic Events has been paying later recently. Their last 3 invoices were 2, 5, and 7 days late — a clear upward trend.",
+      "resolution": {
+        "day": 18,
+        "message": "Nordic Events paid invoice #INV-2024-156 — 8 days late. £16,500 bridge auto-resolved."
+      },
+      "second_cycle": {
+        "gap_detection_day": 35,
+        "obligation_day": 38,
+        "recommendation": {
+          "amount": 16500,
+          "gap_breakdown": {
+            "obligation": 20000,
+            "balance": 7000,
+            "buffer": 3500,
+            "shortfall": 16500
+          },
+          "decision": "advance",
+          "confidence": "medium",
+          "rationale": "Nordic Events owes you £25,000 — due before payroll. But they’ve been paying 2 to 8 days late recently. If that continues, the money won’t land in time. We can bridge £16,500 so payroll is covered regardless.",
+          "risk_factors": [
+            "Nordic Events’ recent payments: 2 → 5 → 7 → 8 days late"
+          ]
+        },
+        "resolution": {
+          "day": 43,
+          "message": "Nordic Events paid invoice #INV-2024-157 — 8 days late. £16,500 bridge auto-resolved."
+        },
+        "decline_reason": null
+      },
+      "decline_reason": null,
+      "post_resolution_notice": {
+        "day": 18,
+        "message": "Your bridge resolved, but Nordic Events paid 8 days past their due date — continuing their trend (2 → 5 → 7 → 8 days late). Given this trajectory, we likely can’t recommend a bridge next cycle. Consider setting up your overdraft as a backup or following up with Nordic Events about their payment schedule."
+      }
+    }
+  ],
+  "businesses": [
+    {
+      "business_id": "biz_001",
+      "name": "Verdant Studio",
+      "industry": "Design Agency",
+      "overdraft_limit": 50000,
+      "current_balance": 31000,
+      "typical_buffer": 5000,
+      "monthly_revenue_avg": 120000,
+      "months_on_platform": 18,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "bridge_works"
+    },
+    {
+      "business_id": "biz_004",
+      "name": "Vero Analytics",
+      "industry": "Data Consulting",
+      "overdraft_limit": 50000,
+      "current_balance": 18000,
+      "typical_buffer": 6000,
+      "monthly_revenue_avg": 150000,
+      "months_on_platform": 22,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "gotcha_deteriorating_payer"
+    },
+    {
+      "business_id": "biz_006",
+      "name": "Fika & Co",
+      "industry": "Catering",
+      "overdraft_limit": 50000,
+      "current_balance": 12000,
+      "typical_buffer": 3500,
+      "monthly_revenue_avg": 55000,
+      "months_on_platform": 16,
+      "balance_trend": "stable",
+      "overdraft_usage_trend": "stable",
+      "scenario": "transition"
+    }
+  ],
+  "obligations": [
+    {
+      "obligation_id": "obl_001",
+      "business_id": "biz_001",
+      "type": "payroll",
+      "amount": 42000,
+      "due_in_days": 9,
+      "recurring": true,
+      "description": "Monthly payroll - 12 employees"
+    },
+    {
+      "obligation_id": "obl_002",
+      "business_id": "biz_001",
+      "type": "rent",
+      "amount": 4500,
+      "due_in_days": 15,
+      "recurring": true,
+      "description": "Studio lease"
+    },
+    {
+      "obligation_id": "obl_007",
+      "business_id": "biz_004",
+      "type": "payroll",
+      "amount": 42000,
+      "due_in_days": 8,
+      "recurring": true,
+      "description": "Monthly payroll - 12 employees"
+    },
+    {
+      "obligation_id": "obl_008",
+      "business_id": "biz_004",
+      "type": "tax",
+      "amount": 14000,
+      "due_in_days": 20,
+      "recurring": false,
+      "description": "Quarterly VAT payment"
+    },
+    {
+      "obligation_id": "obl_012",
+      "business_id": "biz_006",
+      "type": "payroll",
+      "amount": 20000,
+      "due_in_days": 8,
+      "recurring": true,
+      "description": "Monthly payroll - 6 employees"
+    },
+    {
+      "obligation_id": "obl_013",
+      "business_id": "biz_006",
+      "type": "vendor",
+      "amount": 5000,
+      "due_in_days": 12,
+      "recurring": true,
+      "description": "Monthly food supplier delivery"
+    },
+    {
+      "obligation_id": "obl_014",
+      "business_id": "biz_006",
+      "type": "payroll",
+      "amount": 20000,
+      "due_in_days": 38,
+      "recurring": true,
+      "description": "Monthly payroll - 6 employees (cycle 2)"
+    }
+  ],
+  "receivables": [
+    {
+      "receivable_id": "rec_001",
+      "business_id": "biz_001",
+      "payer_id": "pyr_001",
+      "invoice_amount": 50000,
+      "due_in_days": 35,
+      "description": "Q1 brand identity project - Acme Corp"
+    },
+    {
+      "receivable_id": "rec_002",
+      "business_id": "biz_001",
+      "payer_id": "pyr_002",
+      "invoice_amount": 8000,
+      "due_in_days": 40,
+      "description": "Logo refresh - Bloom Bakery"
+    },
+    {
+      "receivable_id": "rec_006",
+      "business_id": "biz_004",
+      "payer_id": "pyr_006",
+      "invoice_amount": 55000,
+      "due_in_days": 32,
+      "description": "Data migration project - TrustBank"
+    },
+    {
+      "receivable_id": "rec_007",
+      "business_id": "biz_004",
+      "payer_id": "pyr_006",
+      "invoice_amount": 30000,
+      "due_in_days": 42,
+      "description": "Analytics dashboard phase 2 - TrustBank"
+    },
+    {
+      "receivable_id": "rec_010",
+      "business_id": "biz_006",
+      "payer_id": "pyr_009",
+      "invoice_amount": 20000,
+      "due_in_days": 10,
+      "description": "March corporate events catering - Nordic Events"
+    },
+    {
+      "receivable_id": "rec_011",
+      "business_id": "biz_006",
+      "payer_id": "pyr_009",
+      "invoice_amount": 25000,
+      "due_in_days": 35,
+      "description": "April corporate events catering - Nordic Events"
+    }
+  ],
+  "payers": [
+    {
+      "payer_id": "pyr_001",
+      "payer_name": "Acme Corp",
+      "total_invoices": 12,
+      "paid_on_time": 11,
+      "avg_days_to_pay": 28,
+      "avg_days_late_when_late": 5,
+      "last_5_payments": [
+        {
+          "days_to_pay": 27,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 26,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 30,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 28,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 25,
+          "on_time": true
+        }
+      ],
+      "trend": "stable",
+      "first_invoice_months_ago": 24
+    },
+    {
+      "payer_id": "pyr_002",
+      "payer_name": "Bloom Bakery",
+      "total_invoices": 3,
+      "paid_on_time": 3,
+      "avg_days_to_pay": 22,
+      "avg_days_late_when_late": 0,
+      "last_5_payments": [
+        {
+          "days_to_pay": 20,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 24,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 22,
+          "on_time": true
+        }
+      ],
+      "trend": "stable",
+      "first_invoice_months_ago": 5
+    },
+    {
+      "payer_id": "pyr_006",
+      "payer_name": "TrustBank",
+      "total_invoices": 15,
+      "paid_on_time": 13,
+      "avg_days_to_pay": 30,
+      "avg_days_late_when_late": 8,
+      "last_5_payments": [
+        {
+          "days_to_pay": 30,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 35,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 38,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 42,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 45,
+          "on_time": false
+        }
+      ],
+      "trend": "deteriorating",
+      "first_invoice_months_ago": 30
+    },
+    {
+      "payer_id": "pyr_009",
+      "payer_name": "Nordic Events",
+      "total_invoices": 10,
+      "paid_on_time": 7,
+      "avg_days_to_pay": 31,
+      "avg_days_late_when_late": 5,
+      "last_5_payments": [
+        {
+          "days_to_pay": 25,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 28,
+          "on_time": true
+        },
+        {
+          "days_to_pay": 32,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 35,
+          "on_time": false
+        },
+        {
+          "days_to_pay": 37,
+          "on_time": false
+        }
+      ],
+      "trend": "deteriorating",
+      "first_invoice_months_ago": 18,
+      "payment_terms_days": 30
+    }
+  ]
+}
