@@ -1,6 +1,6 @@
 # Bridge
 
-Prototype of purpose-bound invoice bridge credit for SMBs on a spend-management platform. The bridge auto-resolves when the invoice gets paid.
+Prototype of purpose-bound invoice bridge credit for SMBs. The bridge auto-resolves when the invoice gets paid.
 
 **[Try the prototype →](https://bridge-red-xi.vercel.app/)**
 
